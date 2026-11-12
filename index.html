@@ -52,6 +52,7 @@
     font-size: 28px; font-weight: 700; margin: 0; line-height: 1.1;
     display: inline-flex; align-items: center; gap: 6px;
   }
+  .app-version { font-size: 12px; font-weight: 500; color: var(--text-2); margin-left: -4px; align-self: flex-end; padding-bottom: 3px; }
   .logo { width: 32px; height: 32px; flex: none; display: block; }
   .subtitle { margin: -10px 0 16px; color: var(--text-2); }
   h2 { font-size: 18px; font-weight: 600; margin: 0 0 12px; }
@@ -316,7 +317,7 @@
   <!-- ÉCRAN 1 : RÉGLAGES -->
   <section id="screen-setup">
     <header class="top">
-      <div class="brand-wrap"><h1 class="brand"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg>Mölkky</h1></div>
+      <div class="brand-wrap"><h1 class="brand"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg>Mölkky</h1><span class="app-version"></span></div>
     </header>
     <p class="subtitle">Compteur de points</p>
 
@@ -370,7 +371,7 @@
   <section id="screen-game" class="hidden">
     <header class="top">
       <div class="brand-wrap">
-        <h1 class="brand"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg>Mölkky</h1>
+        <h1 class="brand"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg>Mölkky</h1><span class="app-version"></span>
         <span id="mode-tag-game"></span>
       </div>
       <button id="new-game-btn">Nouvelle partie</button>
@@ -406,7 +407,7 @@
   <section id="screen-win" class="hidden">
     <header class="top">
       <div class="brand-wrap">
-        <h1 class="brand"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg>Mölkky</h1>
+        <h1 class="brand"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg>Mölkky</h1><span class="app-version"></span>
         <span id="mode-tag-win"></span>
       </div>
     </header>
@@ -461,6 +462,7 @@
 (function () {
   'use strict';
 
+  var APP_VERSION = '1.0'; // à augmenter à chaque mise à jour (1.1, 1.2...)
   var STORAGE_KEY = 'molkky-compteur-v1';
   var MAIN = { target: 50, back: 25 };     // partie principale
   var PLAYOFF = { target: 12, back: 6 };   // barrage
@@ -1090,6 +1092,7 @@
   });
 
   // ---------- Démarrage ----------
+  document.querySelectorAll('.app-version').forEach(function (el) { el.textContent = 'v' + APP_VERSION; });
   load();
   render();
 
