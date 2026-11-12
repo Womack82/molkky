@@ -247,6 +247,42 @@
   .modal { background: var(--card); border-radius: 20px; padding: 22px; width: 100%; max-width: 380px; }
   .modal p { margin: 0 0 18px; font-weight: 500; }
   .modal .row > button { flex: 1; }
+
+  /* Private joke : exactement 2 quilles */
+  .pascal-back {
+    position: fixed; inset: 0; z-index: 20;
+    background: rgba(92, 83, 70, .45);
+    display: flex; align-items: center; justify-content: center;
+    padding: 16px; cursor: pointer;
+  }
+  .pascal-back.show { animation: pascal-fade .25s ease-out both; }
+  .pascal-card {
+    background: var(--text);
+    border-radius: 28px;
+    width: 100%; max-width: 340px;
+    padding: 26px 22px 28px;
+    text-align: center;
+    transform: rotate(-2deg);
+  }
+  .pascal-back.show .pascal-card { animation: pascal-pop .5s cubic-bezier(.34, 1.56, .64, 1) both; }
+  .pascal-pins { display: flex; justify-content: center; gap: 14px; margin-bottom: 16px; }
+  .pascal-pins span {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: var(--sage); color: var(--text);
+    display: grid; place-items: center;
+    font-size: 21px; font-weight: 700;
+  }
+  .pascal-pins span:first-child { transform: rotate(-20deg); }
+  .pascal-pins span:last-child { transform: rotate(18deg); }
+  .pascal-text { margin: 0; color: var(--sage); font-size: 28px; font-weight: 700; line-height: 1.15; }
+  @keyframes pascal-fade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes pascal-pop {
+    from { transform: rotate(-2deg) scale(.7); }
+    to { transform: rotate(-2deg) scale(1); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pascal-back.show, .pascal-back.show .pascal-card { animation: none; }
+  }
 </style>
 </head>
 <body>
@@ -385,6 +421,14 @@
       <button id="modal-cancel">Annuler</button>
       <button class="primary" id="modal-ok">Confirmer</button>
     </div>
+  </div>
+</div>
+
+<!-- Private joke : exactement 2 quilles -->
+<div class="pascal-back hidden" id="pascal" role="status" aria-live="polite">
+  <div class="pascal-card">
+    <div class="pascal-pins" aria-hidden="true"><span id="pascal-pin-a"></span><span id="pascal-pin-b"></span></div>
+    <p class="pascal-text" id="pascal-text"></p>
   </div>
 </div>
 
@@ -821,7 +865,33 @@
     save();
     render();
     if (g.winner !== null || g.log[g.log.length - 1].sep) window.scrollTo(0, 0);
+    if (pins.length === 2) showPascal(pins);
   }
+
+  // ---------- Private joke : exactement 2 quilles ----------
+  var PASCAL_LINES = ['Oh la belle Pascal !', 'Pascal serait fier de toi', 'Une classique Pascal'];
+  var pascalTimer = null;
+
+  function showPascal(pins) {
+    var el = $('pascal');
+    $('pascal-pin-a').textContent = pins[0];
+    $('pascal-pin-b').textContent = pins[1];
+    $('pascal-text').textContent = PASCAL_LINES[Math.floor(Math.random() * PASCAL_LINES.length)];
+    el.classList.remove('hidden', 'show');
+    void el.offsetWidth; // relance l'animation si le message est déjà affiché
+    el.classList.add('show');
+    clearTimeout(pascalTimer);
+    pascalTimer = setTimeout(hidePascal, 3000);
+    try {
+      if (navigator.vibrate) navigator.vibrate([60, 40, 60]);
+    } catch (e) { /* vibration indisponible */ }
+  }
+  function hidePascal() {
+    clearTimeout(pascalTimer);
+    $('pascal').classList.add('hidden');
+    $('pascal').classList.remove('show');
+  }
+  $('pascal').addEventListener('click', hidePascal);
 
   // Passe au lanceur suivant, termine le tour, lance un barrage ou désigne le gagnant.
   function advance(g, entry) {
