@@ -256,10 +256,6 @@
   .pin.sel { background: var(--sage); color: var(--text); transform: scale(1.08); --end: 1.08; }
   .pin:active { transform: scale(.9); }
   .pin.tap { animation: pin-tap .28s ease-out; }
-  .pins.rise .pin { animation: pin-rise .3s cubic-bezier(.34, 1.56, .64, 1) backwards; animation-delay: calc(var(--k) * 25ms); }
-  .pin.fall-l, .pin.fall-r { transform-origin: 50% 100%; pointer-events: none; }
-  .pin.fall-l { animation: fall-l .32s ease-in forwards; }
-  .pin.fall-r { animation: fall-r .32s ease-in forwards; }
   .pins.shake { animation: shake .38s ease-in-out; }
   .pin {
     will-change: transform;
@@ -382,12 +378,6 @@
     75% { transform: scale(calc(var(--end) + .06)); }
     100% { transform: scale(var(--end)); }
   }
-  @keyframes pin-rise {
-    from { transform: translateY(14px) scale(.3); opacity: 0; }
-    to { transform: none; opacity: 1; }
-  }
-  @keyframes fall-l { to { transform: translateX(-14px) rotate(-85deg); opacity: 0; } }
-  @keyframes fall-r { to { transform: translateX(14px) rotate(85deg); opacity: 0; } }
   @keyframes shake {
     0%, 100% { transform: translateX(0); }
     15% { transform: translateX(-9px); } 35% { transform: translateX(8px); }
@@ -672,7 +662,7 @@
 (function () {
   'use strict';
 
-  var APP_VERSION = '1.4'; // à augmenter à chaque mise à jour (1.1, 1.2...)
+  var APP_VERSION = '1.5'; // à augmenter à chaque mise à jour (1.1, 1.2...)
   var STORAGE_KEY = 'molkky-compteur-v1';
   var MAIN = { target: 50, back: 25 };     // partie principale
   var PLAYOFF = { target: 12, back: 6 };   // barrage
@@ -1022,9 +1012,8 @@
     $('current-name').textContent = g.players[g.current].name;
     $('turn-label').textContent = (g.level > 0 ? 'Barrage' + (g.level > 1 ? ' n°' + g.level : '') + ' · ' : '') + 'Tour ' + g.turn;
 
-    // Quilles (elles se redressent après un lancer)
+    // Quilles
     var k = 0;
-    $('pins').classList.toggle('rise', !!fx);
     $('pins').innerHTML = PIN_ROWS.map(function (row) {
       return '<div class="prow">' + row.map(function (n) {
         var on = selected.indexOf(n) !== -1;
@@ -1126,29 +1115,19 @@
     renderPreview();
   });
 
-  // Validation : animation de chute (ou tremblement si manqué), puis enregistrement du lancer
+  // Validation : enregistrement immédiat ; sur un lancer manqué, la formation tremble d'abord
   function onValidate() {
     var g = state.game;
     if (!g || g.winner !== null || busy) return;
-    if (!motionOK()) { playThrow(); return; }
+    if (selected.length > 0 || !motionOK()) { playThrow(); return; }
     busy = true;
     var pinsEl = $('pins');
-    var delay;
-    if (selected.length === 0) {
-      restartClass(pinsEl, 'shake');
-      delay = 380;
-    } else {
-      selected.slice().sort(function (a, b) { return a - b; }).forEach(function (n, k) {
-        var b = pinsEl.querySelector('[data-pin="' + n + '"]');
-        if (b) b.classList.add(k % 2 ? 'fall-r' : 'fall-l');
-      });
-      delay = 320;
-    }
+    restartClass(pinsEl, 'shake');
     setTimeout(function () {
       pinsEl.classList.remove('shake');
       busy = false;
       playThrow();
-    }, delay);
+    }, 380);
   }
 
   function playThrow() {
