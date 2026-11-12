@@ -465,6 +465,24 @@
     to { transform: translateY(0) rotate(18deg); opacity: 1; }
   }
 
+  /* Message Bâtard : un joueur égalé retombe (même principe que Pascal) */
+  .batard-card {
+    background: var(--rose); color: var(--on-rose);
+    border-radius: 28px; width: 100%; max-width: 340px;
+    padding: 26px 22px 24px; text-align: center;
+    transform: rotate(2deg);
+  }
+  .pascal-back.show .batard-card { animation: batard-pop .55s cubic-bezier(.34, 1.56, .64, 1) both; }
+  .batard-text { margin: 0; font-size: 32px; font-weight: 700; line-height: 1.1; }
+  .batard-sub { margin-top: 10px; font-size: 17px; font-weight: 600; display: grid; gap: 2px; }
+  .pascal-back.show .batard-sub { animation: rise-in .3s ease-out .35s both; }
+  @keyframes batard-pop {
+    0% { transform: rotate(2deg) scale(.7); }
+    55% { transform: rotate(-3deg) scale(1.04); }
+    75% { transform: rotate(3deg) scale(1); }
+    100% { transform: rotate(2deg) scale(1); }
+  }
+
   /* Réglage « réduire les animations » du téléphone : aucune animation */
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
@@ -650,6 +668,14 @@
 <!-- Confettis de victoire -->
 <canvas id="confetti" class="hidden" aria-hidden="true"></canvas>
 
+<!-- Message Bâtard : un joueur égalé retombe -->
+<div class="pascal-back hidden" id="batard-layer" role="status" aria-live="polite">
+  <div class="batard-card">
+    <p class="batard-text" id="batard-text"></p>
+    <div class="batard-sub" id="batard-sub"></div>
+  </div>
+</div>
+
 <!-- Private joke : exactement 2 quilles -->
 <div class="pascal-back hidden" id="pascal" role="status" aria-live="polite">
   <div class="pascal-card">
@@ -662,7 +688,7 @@
 (function () {
   'use strict';
 
-  var APP_VERSION = '1.5'; // à augmenter à chaque mise à jour (1.1, 1.2...)
+  var APP_VERSION = '1.6'; // à augmenter à chaque mise à jour (1.1, 1.2...)
   var STORAGE_KEY = 'molkky-compteur-v1';
   var MAIN = { target: 50, back: 25 };     // partie principale
   var PLAYOFF = { target: 12, back: 6 };   // barrage
@@ -1199,8 +1225,13 @@
     if (fx.winner) buzz([60, 40, 60, 40, 60, 40, 250]);
     else if (fx.victims.length) buzz([40, 30, 90]);
     else if (fx.reached) buzz([30, 50, 30, 50, 120]);
+    var fell = fx.playoff ? [] : fx.victims.map(function (i) {
+      return g.players[i].name + ' retombe à ' + g.players[i].score;
+    });
     fx = null;
-    if (pins.length === 2) showPascal(pins);
+    // Un seul message à la fois : le Bâtard passe avant Pascal
+    if (fell.length) showBatard(fell);
+    else if (pins.length === 2) showPascal(pins);
   }
 
   // ---------- Animations ----------
@@ -1428,6 +1459,27 @@
     $('pascal').classList.remove('show');
   }
   $('pascal').addEventListener('click', hidePascal);
+
+  // ---------- Message Bâtard : un joueur égalé retombe ----------
+  var BATARD_LINES = ['Oh non !', 'Pas de chance !'];
+  var batardTimer = null;
+
+  function showBatard(fell) {
+    var el = $('batard-layer');
+    $('batard-text').textContent = BATARD_LINES[Math.floor(Math.random() * BATARD_LINES.length)];
+    $('batard-sub').innerHTML = fell.map(function (t) { return '<div>' + esc(t) + '</div>'; }).join('');
+    el.classList.remove('hidden', 'show');
+    void el.offsetWidth;
+    el.classList.add('show');
+    clearTimeout(batardTimer);
+    batardTimer = setTimeout(hideBatard, 3000);
+  }
+  function hideBatard() {
+    clearTimeout(batardTimer);
+    $('batard-layer').classList.add('hidden');
+    $('batard-layer').classList.remove('show');
+  }
+  $('batard-layer').addEventListener('click', hideBatard);
 
   // Passe au lanceur suivant, termine le tour, lance un barrage ou désigne le gagnant.
   function advance(g, entry) {
