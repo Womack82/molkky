@@ -1,12 +1,787 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mölkky – Compteur de points</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2f6b3a">
+<title>Mölkky – Compteur de points</title>
+<style>
+  :root {
+    --bg: #f3f1ea;
+    --surface: #ffffff;
+    --surface-2: #ece8dc;
+    --text: #1f2420;
+    --muted: #6b716b;
+    --border: #d9d4c5;
+    --accent: #2f6b3a;
+    --accent-text: #ffffff;
+    --accent-soft: #dcebd9;
+    --wood: #e2c393;
+    --wood-dark: #b88c4f;
+    --wood-text: #3b2a12;
+    --danger: #b3322a;
+    --danger-soft: #f6dcd9;
+    --warn: #9a5b00;
+    --warn-soft: #fbecd0;
+    --gold: #d9a520;
+    --shadow: 0 1px 3px rgba(0,0,0,.08), 0 2px 8px rgba(0,0,0,.05);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #151816;
+      --surface: #1f2421;
+      --surface-2: #2a302c;
+      --text: #ecefe9;
+      --muted: #9aa39b;
+      --border: #363d38;
+      --accent: #5fb06f;
+      --accent-text: #0e1a10;
+      --accent-soft: #233a28;
+      --wood: #c9a46c;
+      --wood-dark: #8e6a35;
+      --wood-text: #24190a;
+      --danger: #ef7a70;
+      --danger-soft: #3d2220;
+      --warn: #f0b75a;
+      --warn-soft: #3a2e17;
+      --gold: #f0c64a;
+      --shadow: 0 1px 3px rgba(0,0,0,.4);
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size: 16px;
+    line-height: 1.4;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .app {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 12px 16px 40px;
+  }
+  header.top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  h1 { font-size: 1.4rem; margin: 0; }
+  h2 { font-size: 1.05rem; margin: 0 0 10px; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+  }
+  button {
+    font: inherit;
+    min-height: 44px;
+    min-width: 44px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    color: var(--text);
+    padding: 0 14px;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  button.primary {
+    background: var(--accent);
+    color: var(--accent-text);
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+  button.danger { color: var(--danger); }
+  button.big { width: 100%; min-height: 54px; font-size: 1.1rem; }
+  button.ghost { background: transparent; }
+  button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  input[type=text] {
+    font: inherit;
+    min-height: 44px;
+    flex: 1;
+    min-width: 0;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    padding: 0 12px;
+  }
+  .row { display: flex; gap: 8px; align-items: center; }
+  .muted { color: var(--muted); }
+  .hidden { display: none !important; }
+
+  /* Réglages */
+  ol.players { list-style: none; margin: 12px 0 0; padding: 0; }
+  ol.players li {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 0;
+    border-top: 1px solid var(--border);
+  }
+  ol.players li:first-child { border-top: 0; }
+  .num {
+    width: 28px; height: 28px; flex: none;
+    border-radius: 50%;
+    background: var(--accent-soft); color: var(--accent);
+    display: grid; place-items: center;
+    font-weight: 700; font-size: .9rem;
+  }
+  .pname { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+  .empty { padding: 10px 0 0; }
+  .segmented { display: flex; gap: 8px; }
+  .segmented label { flex: 1; }
+  .segmented input { position: absolute; opacity: 0; pointer-events: none; }
+  .segmented span {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 44px; border-radius: 10px;
+    border: 1px solid var(--border); background: var(--surface-2);
+    cursor: pointer; font-weight: 500; text-align: center; padding: 0 8px;
+  }
+  .segmented input:checked + span {
+    background: var(--accent); color: var(--accent-text); border-color: var(--accent);
+  }
+  .segmented input:focus-visible + span { outline: 3px solid var(--accent); outline-offset: 2px; }
+  ul.rules { margin: 0; padding-left: 20px; }
+  ul.rules li { margin: 4px 0; }
+
+  /* Tableau des scores */
+  .scoreboard { display: grid; gap: 8px; }
+  .pcard {
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 12px;
+    background: var(--surface);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 4px 12px;
+    align-items: center;
+  }
+  .pcard.current {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .pcard.out { opacity: .5; filter: grayscale(1); }
+  .pcard .nm { font-weight: 600; overflow-wrap: anywhere; }
+  .pcard .sc { font-size: 2rem; font-weight: 800; line-height: 1; text-align: right; font-variant-numeric: tabular-nums; grid-row: span 2; }
+  .pcard .meta { display: flex; align-items: center; gap: 10px; }
+  .bar { flex: 1; height: 8px; border-radius: 4px; background: var(--surface-2); overflow: hidden; }
+  .bar > i { display: block; height: 100%; background: var(--accent); border-radius: 4px; transition: width .25s; }
+  .dots { display: flex; gap: 4px; flex: none; }
+  .dots i { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--danger); }
+  .dots i.on { background: var(--danger); }
+  .tag {
+    display: inline-block; font-size: .75rem; font-weight: 600;
+    padding: 1px 8px; border-radius: 99px; margin-left: 6px;
+    background: var(--danger-soft); color: var(--danger); vertical-align: middle;
+  }
+  .tag.turn { background: var(--accent); color: var(--accent-text); }
+
+  .turnline { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; gap: 8px; }
+  .turnline .who { font-size: 1.2rem; font-weight: 700; overflow-wrap: anywhere; }
+
+  /* Quilles */
+  .pins { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 6px 0 14px; }
+  .pins .prow { display: flex; gap: 8px; justify-content: center; }
+  .pin {
+    width: 62px; height: 62px;
+    border-radius: 14px 14px 10px 10px;
+    background: var(--wood);
+    border: 2px solid var(--wood-dark);
+    color: var(--wood-text);
+    font-size: 1.5rem; font-weight: 800;
+    padding: 0;
+    transition: transform .1s, background .1s;
+  }
+  .pin.sel {
+    background: var(--accent); border-color: var(--accent); color: var(--accent-text);
+    transform: rotate(-12deg) translateY(3px);
+  }
+  .preview {
+    min-height: 44px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: var(--surface-2);
+    margin-bottom: 10px;
+    text-align: center;
+    font-weight: 500;
+  }
+  .preview .warn { display: block; color: var(--warn); font-weight: 600; margin-top: 2px; }
+  .preview .win { display: block; color: var(--accent); font-weight: 700; margin-top: 2px; }
+  .preview .bad { display: block; color: var(--danger); font-weight: 600; margin-top: 2px; }
+  .actions { display: grid; grid-template-columns: 1fr 2fr; gap: 8px; }
+  .actions button { min-height: 54px; }
+
+  /* Historique */
+  ol.history { list-style: none; margin: 0; padding: 0; }
+  ol.history li {
+    display: grid; grid-template-columns: 1fr auto; gap: 2px 10px;
+    padding: 8px 0; border-top: 1px solid var(--border);
+  }
+  ol.history li:first-child { border-top: 0; }
+  ol.history .h-who { font-weight: 600; overflow-wrap: anywhere; }
+  ol.history .h-pts { font-weight: 700; text-align: right; }
+  ol.history .h-det { color: var(--muted); font-size: .9rem; }
+  ol.history .h-tot { text-align: right; font-size: .9rem; color: var(--muted); }
+  ol.history .h-note { grid-column: 1 / -1; font-size: .85rem; color: var(--warn); font-weight: 600; }
+
+  /* Victoire */
+  .victory { text-align: center; padding: 24px 14px; }
+  .victory .trophy { font-size: 3.5rem; line-height: 1; }
+  .victory .winner { font-size: 2.2rem; font-weight: 800; margin: 8px 0 2px; overflow-wrap: anywhere; }
+  ol.ranking { list-style: none; margin: 0; padding: 0; }
+  ol.ranking li {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 0; border-top: 1px solid var(--border);
+  }
+  ol.ranking li:first-child { border-top: 0; }
+  ol.ranking .rk { width: 28px; text-align: center; font-weight: 800; color: var(--muted); }
+  ol.ranking li.first .rk { color: var(--gold); }
+  ol.ranking .rs { font-weight: 700; font-variant-numeric: tabular-nums; }
+  ol.ranking li.out { opacity: .6; }
+  .stack { display: grid; gap: 8px; }
+
+  /* Fenêtre de confirmation */
+  .modal-back {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.5);
+    display: flex; align-items: center; justify-content: center;
+    padding: 16px; z-index: 10;
+  }
+  .modal {
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 20px;
+    width: 100%; max-width: 380px;
+    box-shadow: 0 10px 40px rgba(0,0,0,.3);
+  }
+  .modal p { margin: 0 0 16px; }
+  .modal .row > button { flex: 1; }
+</style>
 </head>
 <body>
-  <h1>Mölkky – Compteur de points</h1>
-  <p>Application en cours de construction.</p>
+<div class="app">
+
+  <!-- ÉCRAN 1 : RÉGLAGES -->
+  <section id="screen-setup">
+    <header class="top"><h1>Compteur Mölkky</h1></header>
+
+    <div class="card">
+      <h2>Joueurs</h2>
+      <form id="add-form" class="row" autocomplete="off">
+        <input type="text" id="player-input" maxlength="30" placeholder="Nom du joueur ou de l'équipe" aria-label="Nom du joueur ou de l'équipe">
+        <button type="submit" class="primary">Ajouter</button>
+      </form>
+      <ol class="players" id="player-list"></ol>
+      <p class="muted empty" id="player-empty">Ajoutez au moins 2 joueurs. L'ordre de la liste est l'ordre de jeu.</p>
+    </div>
+
+    <div class="card">
+      <h2>3 lancers manqués d'affilée</h2>
+      <div class="segmented" role="radiogroup">
+        <label><input type="radio" name="miss-mode" value="elim"><span>Éliminé</span></label>
+        <label><input type="radio" name="miss-mode" value="zero"><span>Retour à 0</span></label>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Rappel des règles</h2>
+      <ul class="rules">
+        <li>1 seule quille tombée : on marque son numéro.</li>
+        <li>Plusieurs quilles tombées : on marque le nombre de quilles.</li>
+        <li>Il faut atteindre <strong>exactement 50</strong>. Au-delà, on retombe à 25.</li>
+        <li id="rule-miss"></li>
+        <li>Le premier à 50 gagne, ou le dernier joueur encore en jeu.</li>
+      </ul>
+    </div>
+
+    <button class="primary big" id="start-btn">Commencer la partie</button>
+  </section>
+
+  <!-- ÉCRAN 2 : PARTIE -->
+  <section id="screen-game" class="hidden">
+    <header class="top">
+      <h1>Mölkky</h1>
+      <button id="new-game-btn">Nouvelle partie</button>
+    </header>
+
+    <div class="card">
+      <div class="scoreboard" id="scoreboard"></div>
+    </div>
+
+    <div class="card">
+      <div class="turnline">
+        <div>Au tour de <span class="who" id="current-name"></span></div>
+        <div class="muted" id="turn-label"></div>
+      </div>
+      <div class="pins" id="pins"></div>
+      <div class="preview" id="preview" aria-live="polite"></div>
+      <div class="actions">
+        <button id="undo-btn">Annuler</button>
+        <button class="primary" id="validate-btn"></button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Historique</h2>
+      <ol class="history" id="history"></ol>
+      <p class="muted" id="history-empty">Aucun lancer pour l'instant.</p>
+    </div>
+  </section>
+
+  <!-- ÉCRAN 3 : VICTOIRE -->
+  <section id="screen-win" class="hidden">
+    <div class="card victory">
+      <div class="trophy" aria-hidden="true">🏆</div>
+      <div class="winner" id="winner-name"></div>
+      <div class="muted">remporte la partie !</div>
+    </div>
+    <div class="card">
+      <h2>Classement</h2>
+      <ol class="ranking" id="ranking"></ol>
+    </div>
+    <div class="stack">
+      <button class="primary big" id="rematch-btn">Revanche</button>
+      <button class="big" id="win-undo-btn">Annuler le dernier lancer</button>
+      <button class="big" id="change-btn">Changer joueurs / mode</button>
+    </div>
+  </section>
+</div>
+
+<!-- Fenêtre de confirmation -->
+<div class="modal-back hidden" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-text">
+  <div class="modal">
+    <p id="modal-text"></p>
+    <div class="row">
+      <button id="modal-cancel">Annuler</button>
+      <button class="primary" id="modal-ok">Confirmer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var STORAGE_KEY = 'molkky-compteur-v1';
+  var TARGET = 50;
+  var BACK_TO = 25;
+  var PIN_ROWS = [[7, 9, 8], [5, 11, 12, 6], [3, 10, 4], [1, 2]];
+
+  // ---------- État ----------
+  var state = {
+    names: [],          // joueurs saisis à l'écran de réglages
+    missMode: 'elim',   // 'elim' ou 'zero'
+    game: null,         // partie en cours
+    undo: []            // pile d'états précédents (JSON)
+  };
+  var selected = [];    // quilles sélectionnées (non sauvegardé)
+  var modalAction = null;
+
+  function newGame(names, missMode, starter) {
+    return {
+      players: names.map(function (n) {
+        return { name: n, score: 0, misses: 0, eliminated: false };
+      }),
+      missMode: missMode,
+      starter: starter,
+      current: starter,
+      turn: 1,
+      log: [],
+      winner: null
+    };
+  }
+
+  // ---------- Sauvegarde ----------
+  function save() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (e) { /* stockage indisponible : on continue sans */ }
+  }
+  function load() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      var s = JSON.parse(raw);
+      if (s && Array.isArray(s.names)) {
+        state.names = s.names;
+        state.missMode = s.missMode === 'zero' ? 'zero' : 'elim';
+        state.game = s.game || null;
+        state.undo = Array.isArray(s.undo) ? s.undo : [];
+      }
+    } catch (e) { /* données illisibles : on repart de zéro */ }
+  }
+
+  // ---------- Outils ----------
+  function $(id) { return document.getElementById(id); }
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function pointsFor(pins) {
+    if (pins.length === 0) return 0;
+    if (pins.length === 1) return pins[0];
+    return pins.length;
+  }
+  function activeIndexes(g) {
+    var out = [];
+    g.players.forEach(function (p, i) { if (!p.eliminated) out.push(i); });
+    return out;
+  }
+  function plural(n, word) { return n + ' ' + word + (n > 1 ? 's' : ''); }
+
+  // ---------- Écran actif ----------
+  function currentScreen() {
+    if (!state.game) return 'setup';
+    return state.game.winner !== null ? 'win' : 'game';
+  }
+
+  function render() {
+    var screen = currentScreen();
+    $('screen-setup').classList.toggle('hidden', screen !== 'setup');
+    $('screen-game').classList.toggle('hidden', screen !== 'game');
+    $('screen-win').classList.toggle('hidden', screen !== 'win');
+    if (screen === 'setup') renderSetup();
+    else if (screen === 'game') renderGame();
+    else renderWin();
+  }
+
+  // ---------- Écran 1 : réglages ----------
+  function renderSetup() {
+    var list = $('player-list');
+    list.innerHTML = state.names.map(function (n, i) {
+      return '<li>' +
+        '<span class="num">' + (i + 1) + '</span>' +
+        '<span class="pname">' + esc(n) + '</span>' +
+        '<button type="button" data-up="' + i + '" aria-label="Monter ' + esc(n) + '"' + (i === 0 ? ' disabled' : '') + '>▲</button>' +
+        '<button type="button" class="danger" data-del="' + i + '" aria-label="Retirer ' + esc(n) + '">✕</button>' +
+        '</li>';
+    }).join('');
+    $('player-empty').classList.toggle('hidden', state.names.length >= 2);
+    $('start-btn').disabled = state.names.length < 2;
+
+    document.querySelectorAll('input[name=miss-mode]').forEach(function (r) {
+      r.checked = r.value === state.missMode;
+    });
+    $('rule-miss').textContent = '3 lancers manqués d\'affilée : ' +
+      (state.missMode === 'elim' ? 'le joueur est éliminé.' : 'le score retombe à 0.') +
+      ' Un lancer qui marque remet le compteur à 0.';
+  }
+
+  $('add-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var input = $('player-input');
+    var name = input.value.trim().replace(/\s+/g, ' ');
+    if (!name) { input.focus(); return; }
+    state.names.push(name);
+    input.value = '';
+    input.focus();
+    save();
+    renderSetup();
+  });
+
+  $('player-list').addEventListener('click', function (e) {
+    var btn = e.target.closest('button');
+    if (!btn) return;
+    if (btn.dataset.up !== undefined) {
+      var i = +btn.dataset.up;
+      if (i > 0) {
+        var t = state.names[i - 1];
+        state.names[i - 1] = state.names[i];
+        state.names[i] = t;
+      }
+    } else if (btn.dataset.del !== undefined) {
+      state.names.splice(+btn.dataset.del, 1);
+    }
+    save();
+    renderSetup();
+  });
+
+  document.querySelectorAll('input[name=miss-mode]').forEach(function (r) {
+    r.addEventListener('change', function () {
+      state.missMode = r.value;
+      save();
+      renderSetup();
+    });
+  });
+
+  $('start-btn').addEventListener('click', function () {
+    if (state.names.length < 2) return;
+    state.game = newGame(state.names, state.missMode, 0);
+    state.undo = [];
+    selected = [];
+    save();
+    render();
+    window.scrollTo(0, 0);
+  });
+
+  // ---------- Écran 2 : partie ----------
+  function renderGame() {
+    var g = state.game;
+
+    // Tableau des scores
+    $('scoreboard').innerHTML = g.players.map(function (p, i) {
+      var cls = 'pcard' + (i === g.current ? ' current' : '') + (p.eliminated ? ' out' : '');
+      var dots = '';
+      for (var k = 0; k < 3; k++) dots += '<i class="' + (k < p.misses ? 'on' : '') + '"></i>';
+      var tag = p.eliminated ? '<span class="tag">éliminé</span>'
+        : (i === g.current ? '<span class="tag turn">lance</span>' : '');
+      return '<div class="' + cls + '">' +
+        '<div class="nm">' + esc(p.name) + tag + '</div>' +
+        '<div class="sc">' + p.score + '</div>' +
+        '<div class="meta">' +
+          '<div class="bar" aria-hidden="true"><i style="width:' + Math.min(100, p.score / TARGET * 100) + '%"></i></div>' +
+          '<div class="dots" title="Lancers manqués d\'affilée : ' + p.misses + '/3">' + dots + '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    $('current-name').textContent = g.players[g.current].name;
+    $('turn-label').textContent = 'Tour ' + g.turn;
+
+    // Quilles
+    $('pins').innerHTML = PIN_ROWS.map(function (row) {
+      return '<div class="prow">' + row.map(function (n) {
+        var on = selected.indexOf(n) !== -1;
+        return '<button type="button" class="pin' + (on ? ' sel' : '') + '" data-pin="' + n + '" aria-pressed="' + on + '" aria-label="Quille ' + n + '">' + n + '</button>';
+      }).join('') + '</div>';
+    }).join('');
+
+    renderPreview();
+
+    // Historique
+    var hist = g.log.slice().reverse();
+    $('history').innerHTML = hist.map(function (h) {
+      var det = h.pins.length === 0 ? 'Manqué'
+        : (h.pins.length === 1 ? 'Quille n°' + h.pins[0] : plural(h.pins.length, 'quille') + ' (' + h.pins.join(', ') + ')');
+      return '<li>' +
+        '<span class="h-who">' + esc(h.name) + '</span>' +
+        '<span class="h-pts">+' + h.pts + '</span>' +
+        '<span class="h-det">' + det + '</span>' +
+        '<span class="h-tot">total ' + h.total + '</span>' +
+        (h.notes.length ? '<span class="h-note">' + esc(h.notes.join(' · ')) + '</span>' : '') +
+        '</li>';
+    }).join('');
+    $('history-empty').classList.toggle('hidden', g.log.length > 0);
+
+    $('undo-btn').disabled = state.undo.length === 0;
+  }
+
+  function renderPreview() {
+    var g = state.game;
+    var p = g.players[g.current];
+    var pins = selected.slice().sort(function (a, b) { return a - b; });
+    var pts = pointsFor(pins);
+    var html;
+
+    if (pins.length === 0) {
+      var m = p.misses + 1;
+      html = 'Aucune quille : lancer manqué (' + m + '/3)';
+      if (m >= 3) {
+        if (g.missMode === 'elim') {
+          html += '<span class="bad">3e lancer manqué : ' + esc(p.name) + ' sera éliminé</span>';
+          if (activeIndexes(g).length === 2) {
+            var other = g.players[activeIndexes(g).filter(function (i) { return i !== g.current; })[0]];
+            html += '<span class="win">' + esc(other.name) + ' gagnera la partie</span>';
+          }
+        } else {
+          html += '<span class="bad">3e lancer manqué : retour à 0</span>';
+        }
+      }
+      $('validate-btn').textContent = 'Manqué (0)';
+    } else {
+      var total = p.score + pts;
+      html = pins.length === 1
+        ? '1 quille (n°' + pins[0] + ') : ' + pts + ' pts · total ' + total
+        : plural(pins.length, 'quille') + ' : ' + pts + ' pts · total ' + total;
+      if (total > TARGET) html += '<span class="warn">Dépasse 50 : retour à ' + BACK_TO + '</span>';
+      else if (total === TARGET) html += '<span class="win">50 pile : victoire !</span>';
+      $('validate-btn').textContent = 'Valider : +' + pts;
+    }
+    $('preview').innerHTML = html;
+  }
+
+  $('pins').addEventListener('click', function (e) {
+    var btn = e.target.closest('button[data-pin]');
+    if (!btn) return;
+    var n = +btn.dataset.pin;
+    var idx = selected.indexOf(n);
+    if (idx === -1) selected.push(n); else selected.splice(idx, 1);
+    var on = idx === -1;
+    btn.classList.toggle('sel', on);
+    btn.setAttribute('aria-pressed', on);
+    renderPreview();
+  });
+
+  function playThrow() {
+    var g = state.game;
+    if (!g || g.winner !== null) return;
+    state.undo.push(JSON.stringify(g));
+
+    var p = g.players[g.current];
+    var pins = selected.slice().sort(function (a, b) { return a - b; });
+    var pts = pointsFor(pins);
+    var notes = [];
+
+    if (pts > 0) {
+      p.misses = 0;
+      var total = p.score + pts;
+      if (total > TARGET) {
+        notes.push('dépasse 50 → retour à ' + BACK_TO);
+        total = BACK_TO;
+      }
+      p.score = total;
+      if (total === TARGET) {
+        g.winner = g.current;
+        notes.push('50 pile : victoire !');
+      }
+    } else {
+      p.misses += 1;
+      if (p.misses >= 3) {
+        if (g.missMode === 'elim') {
+          p.eliminated = true;
+          notes.push('3e manqué : éliminé');
+        } else {
+          p.score = 0;
+          p.misses = 0;
+          notes.push('3e manqué : retour à 0');
+        }
+      } else {
+        notes.push('manqué ' + p.misses + '/3');
+      }
+    }
+
+    var entry = { name: p.name, pins: pins, pts: pts, total: p.score, notes: notes };
+    g.log.push(entry);
+
+    if (g.winner === null) {
+      var active = activeIndexes(g);
+      if (active.length === 1) {
+        g.winner = active[0];
+        entry.notes.push(g.players[active[0]].name + ' est le dernier en jeu : victoire !');
+      } else {
+        // joueur suivant non éliminé
+        var n = g.players.length;
+        var next = g.current;
+        do { next = (next + 1) % n; } while (g.players[next].eliminated);
+        if (next <= g.current) g.turn += 1;
+        g.current = next;
+      }
+    }
+
+    selected = [];
+    save();
+    render();
+    if (g.winner !== null) window.scrollTo(0, 0);
+  }
+
+  function undoLast() {
+    if (state.undo.length === 0) return;
+    state.game = JSON.parse(state.undo.pop());
+    selected = [];
+    save();
+    render();
+  }
+
+  $('validate-btn').addEventListener('click', playThrow);
+  $('undo-btn').addEventListener('click', undoLast);
+
+  $('new-game-btn').addEventListener('click', function () {
+    openModal('Abandonner la partie en cours et revenir aux réglages ? Les scores seront perdus.', function () {
+      state.game = null;
+      state.undo = [];
+      selected = [];
+      save();
+      render();
+      window.scrollTo(0, 0);
+    });
+  });
+
+  // ---------- Écran 3 : victoire ----------
+  function renderWin() {
+    var g = state.game;
+    $('winner-name').textContent = g.players[g.winner].name;
+
+    var order = g.players.map(function (p, i) { return { p: p, i: i }; });
+    order.sort(function (a, b) {
+      if (a.i === g.winner) return -1;
+      if (b.i === g.winner) return 1;
+      if (a.p.eliminated !== b.p.eliminated) return a.p.eliminated ? 1 : -1;
+      return b.p.score - a.p.score;
+    });
+    $('ranking').innerHTML = order.map(function (o, k) {
+      var cls = (o.i === g.winner ? 'first' : '') + (o.p.eliminated ? ' out' : '');
+      return '<li class="' + cls + '">' +
+        '<span class="rk">' + (k + 1) + '</span>' +
+        '<span class="pname">' + esc(o.p.name) + (o.p.eliminated ? '<span class="tag">éliminé</span>' : '') + '</span>' +
+        '<span class="rs">' + o.p.score + '</span>' +
+        '</li>';
+    }).join('');
+
+    $('win-undo-btn').disabled = state.undo.length === 0;
+  }
+
+  $('rematch-btn').addEventListener('click', function () {
+    var g = state.game;
+    var names = g.players.map(function (p) { return p.name; });
+    var starter = (g.starter + 1) % names.length;
+    state.game = newGame(names, g.missMode, starter);
+    state.undo = [];
+    selected = [];
+    save();
+    render();
+    window.scrollTo(0, 0);
+  });
+
+  $('win-undo-btn').addEventListener('click', undoLast);
+
+  $('change-btn').addEventListener('click', function () {
+    var g = state.game;
+    state.names = g.players.map(function (p) { return p.name; });
+    state.missMode = g.missMode;
+    state.game = null;
+    state.undo = [];
+    selected = [];
+    save();
+    render();
+    window.scrollTo(0, 0);
+  });
+
+  // ---------- Fenêtre de confirmation ----------
+  function openModal(text, onOk) {
+    $('modal-text').textContent = text;
+    modalAction = onOk;
+    $('modal').classList.remove('hidden');
+    $('modal-ok').focus();
+  }
+  function closeModal() {
+    $('modal').classList.add('hidden');
+    modalAction = null;
+  }
+  $('modal-cancel').addEventListener('click', closeModal);
+  $('modal-ok').addEventListener('click', function () {
+    var fn = modalAction;
+    closeModal();
+    if (fn) fn();
+  });
+  $('modal').addEventListener('click', function (e) {
+    if (e.target === $('modal')) closeModal();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !$('modal').classList.contains('hidden')) closeModal();
+  });
+
+  // ---------- Démarrage ----------
+  load();
+  render();
+})();
+</script>
 </body>
 </html>
