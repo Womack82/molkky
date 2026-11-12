@@ -183,6 +183,17 @@
   }
   .tag.turn { background: var(--accent); color: var(--accent-text); }
   .tag.mode { background: var(--accent-soft); color: var(--accent); font-size: .8rem; }
+  .tag.reach { background: var(--gold); color: #2a1f00; }
+
+  /* Bandeaux */
+  .banner {
+    padding: 10px 12px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  .banner.reach { background: var(--warn-soft); color: var(--warn); border: 1px solid var(--warn); }
+  .banner.playoff { background: var(--accent); color: var(--accent-text); }
 
   /* Choix du mode de jeu */
   .modes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
@@ -251,11 +262,24 @@
   ol.history .h-det { color: var(--muted); font-size: .9rem; }
   ol.history .h-tot { text-align: right; font-size: .9rem; color: var(--muted); }
   ol.history .h-note { grid-column: 1 / -1; font-size: .85rem; color: var(--warn); font-weight: 600; }
+  ol.history li.sep {
+    display: block;
+    margin: 6px 0;
+    padding: 8px 10px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--accent);
+    color: var(--accent-text);
+    font-weight: 700;
+    text-align: center;
+  }
+  ol.history li.sep + li { border-top: 0; }
 
   /* Victoire */
   .victory { text-align: center; padding: 24px 14px; }
   .victory .trophy { font-size: 3.5rem; line-height: 1; }
   .victory .winner { font-size: 2.2rem; font-weight: 800; margin: 8px 0 2px; overflow-wrap: anywhere; }
+  .victory .win-reason { margin-top: 10px; font-weight: 700; color: var(--accent); }
   ol.ranking { list-style: none; margin: 0; padding: 0; }
   ol.ranking li {
     display: flex; align-items: center; gap: 10px;
@@ -329,8 +353,10 @@
         <li>Plusieurs quilles tombées : on marque le nombre de quilles.</li>
         <li>Il faut atteindre <strong>exactement 50</strong>. Au-delà, on retombe à 25.</li>
         <li id="rule-miss"></li>
-        <li id="rule-batard"><strong>Mode Bâtard :</strong> si votre nouveau score égale celui d'un autre joueur en jeu, il retombe à 0 (s'il avait de 0 à 24) ou à 25 (de 25 à 49). Ne s'applique pas sur un lancer manqué.</li>
-        <li>Le premier à 50 gagne, ou le dernier joueur encore en jeu.</li>
+        <li id="rule-batard"><strong>Mode Bâtard :</strong> si votre nouveau score égale celui d'un autre joueur en jeu, il retombe à 0 (s'il avait de 0 à 24) ou à 25 (de 25 à 49). En barrage : 0 (de 0 à 5) ou 6 (de 6 à 11). Ne s'applique pas sur un lancer manqué.</li>
+        <li>Quand un joueur atteint 50, on finit le tour : les joueurs suivants peuvent encore égaler. Seul à 50 : il gagne.</li>
+        <li>Plusieurs joueurs à 50 : barrage entre eux, premier à <strong>exactement 12</strong> (au-delà, retour à 6), avec la même règle de fin de tour.</li>
+        <li>Le dernier joueur encore en jeu gagne.</li>
       </ul>
     </div>
 
@@ -343,6 +369,8 @@
       <h1>Mölkky <span class="tag mode" id="mode-tag-game"></span></h1>
       <button id="new-game-btn">Nouvelle partie</button>
     </header>
+
+    <div id="banners" aria-live="polite"></div>
 
     <div class="card">
       <div class="scoreboard" id="scoreboard"></div>
@@ -377,6 +405,7 @@
       <div class="trophy" aria-hidden="true">🏆</div>
       <div class="winner" id="winner-name"></div>
       <div class="muted">remporte la partie !</div>
+      <div class="win-reason" id="win-reason"></div>
     </div>
     <div class="card">
       <h2>Classement</h2>
@@ -406,8 +435,8 @@
   'use strict';
 
   var STORAGE_KEY = 'molkky-compteur-v1';
-  var TARGET = 50;
-  var BACK_TO = 25;
+  var MAIN = { target: 50, back: 25 };     // partie principale
+  var PLAYOFF = { target: 12, back: 6 };   // barrage
   var PIN_ROWS = [[7, 9, 8], [5, 11, 12, 6], [3, 10, 4], [1, 2]];
   var MODE_LABELS = { classic: 'Classique', batard: 'Bâtard' };
 
@@ -422,18 +451,35 @@
   var selected = [];    // quilles sélectionnées (non sauvegardé)
   var modalAction = null;
 
+  /*
+   * Une partie se joue en « phases » : la partie principale (objectif 50),
+   * puis éventuellement un ou plusieurs barrages (objectif 12).
+   * g.order    : joueurs de la phase, dans l'ordre de jeu
+   * g.pos      : position dans g.order du joueur qui lance
+   * p.done     : le joueur a atteint l'objectif de la phase (il ne lance plus)
+   * p.past     : scores des phases précédentes (ex. [50] pour un finaliste)
+   */
   function newGame(names, missMode, gameMode, starter) {
+    var n = names.length;
+    var order = [];
+    for (var k = 0; k < n; k++) order.push((starter + k) % n);
     return {
-      players: names.map(function (n) {
-        return { name: n, score: 0, misses: 0, eliminated: false };
+      players: names.map(function (nm) {
+        return { name: nm, score: 0, misses: 0, eliminated: false, done: false, past: [] };
       }),
       missMode: missMode,
       gameMode: gameMode,
       starter: starter,
-      current: starter,
+      level: 0,
+      target: MAIN.target,
+      back: MAIN.back,
+      order: order,
+      pos: 0,
+      current: order[0],
       turn: 1,
       log: [],
-      winner: null
+      winner: null,
+      winReason: null
     };
   }
 
@@ -453,8 +499,12 @@
         state.missMode = s.missMode === 'zero' ? 'zero' : 'elim';
         state.gameMode = s.gameMode === 'batard' ? 'batard' : 'classic';
         state.game = s.game || null;
-        if (state.game && !state.game.gameMode) state.game.gameMode = 'classic';
         state.undo = Array.isArray(s.undo) ? s.undo : [];
+        // Partie enregistrée par une ancienne version : on ne la reprend pas.
+        if (state.game && (typeof state.game.target !== 'number' || !state.game.gameMode)) {
+          state.game = null;
+          state.undo = [];
+        }
       }
     } catch (e) { /* données illisibles : on repart de zéro */ }
   }
@@ -466,29 +516,50 @@
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
+  function plural(n, word) { return n + ' ' + word + (n > 1 ? 's' : ''); }
   function pointsFor(pins) {
     if (pins.length === 0) return 0;
     if (pins.length === 1) return pins[0];
     return pins.length;
   }
-  function activeIndexes(g) {
-    var out = [];
-    g.players.forEach(function (p, i) { if (!p.eliminated) out.push(i); });
-    return out;
+  function nameList(g, idx) {
+    return idx.map(function (i) { return g.players[i].name; }).join(', ');
   }
-  function plural(n, word) { return n + ' ' + word + (n > 1 ? 's' : ''); }
+  // Joueurs de la phase encore en jeu (non éliminés)
+  function inPlay(g) {
+    return g.order.filter(function (i) { return !g.players[i].eliminated; });
+  }
+  // Joueurs de la phase qui ont atteint l'objectif
+  function reachedList(g) {
+    return g.order.filter(function (i) {
+      var p = g.players[i];
+      return !p.eliminated && p.done;
+    });
+  }
+  function canThrow(g, i) {
+    var p = g.players[i];
+    return !p.eliminated && !p.done;
+  }
+  // Prochaine position de ce tour où un joueur doit lancer, ou -1 si le tour est fini
+  function nextInRound(g, fromPos) {
+    for (var k = fromPos + 1; k < g.order.length; k++) {
+      if (canThrow(g, g.order[k])) return k;
+    }
+    return -1;
+  }
 
-  // Calcule le résultat d'un lancer qui rapporte des points (pts > 0) :
-  // dépassement de 50, puis règle du Bâtard (joueurs égalisés qui retombent).
+  // Résultat d'un lancer qui rapporte des points (pts > 0) :
+  // dépassement de l'objectif, puis règle du Bâtard.
   function scoreThrow(g, pts) {
     var total = g.players[g.current].score + pts;
     var over = false;
-    if (total > TARGET) { total = BACK_TO; over = true; }
+    if (total > g.target) { total = g.back; over = true; }
     var victims = [];
-    if (g.gameMode === 'batard' && total < TARGET) {
-      g.players.forEach(function (o, i) {
-        if (i !== g.current && !o.eliminated && o.score === total && o.score < TARGET) {
-          victims.push({ i: i, to: o.score < 25 ? 0 : 25 });
+    if (g.gameMode === 'batard' && total < g.target) {
+      g.order.forEach(function (i) {
+        var o = g.players[i];
+        if (i !== g.current && !o.eliminated && !o.done && o.score === total) {
+          victims.push({ i: i, to: o.score < g.back ? 0 : g.back });
         }
       });
     }
@@ -600,25 +671,41 @@
     var g = state.game;
     $('mode-tag-game').textContent = MODE_LABELS[g.gameMode];
 
-    // Tableau des scores
-    $('scoreboard').innerHTML = g.players.map(function (p, i) {
+    // Bandeaux
+    var banners = '';
+    if (g.level > 0) {
+      banners += '<div class="banner playoff">Barrage' + (g.level > 1 ? ' n°' + g.level : '') +
+        ' : premier à ' + PLAYOFF.target + ' points (au-delà, retour à ' + PLAYOFF.back + ').</div>';
+    }
+    var reached = reachedList(g);
+    if (reached.length) {
+      banners += '<div class="banner reach">' + esc(nameList(g, reached)) +
+        (reached.length > 1 ? ' ont' : ' a') + ' atteint ' + g.target +
+        ' ! On finit le tour : les joueurs restants peuvent encore égaler.</div>';
+    }
+    $('banners').innerHTML = banners;
+
+    // Tableau des scores (seulement les joueurs de la phase en cours)
+    $('scoreboard').innerHTML = g.order.map(function (i) {
+      var p = g.players[i];
       var cls = 'pcard' + (i === g.current ? ' current' : '') + (p.eliminated ? ' out' : '');
       var dots = '';
       for (var k = 0; k < 3; k++) dots += '<i class="' + (k < p.misses ? 'on' : '') + '"></i>';
       var tag = p.eliminated ? '<span class="tag">éliminé</span>'
+        : p.done ? '<span class="tag reach">' + g.target + ' atteint</span>'
         : (i === g.current ? '<span class="tag turn">lance</span>' : '');
       return '<div class="' + cls + '">' +
         '<div class="nm">' + esc(p.name) + tag + '</div>' +
         '<div class="sc">' + p.score + '</div>' +
         '<div class="meta">' +
-          '<div class="bar" aria-hidden="true"><i style="width:' + Math.min(100, p.score / TARGET * 100) + '%"></i></div>' +
+          '<div class="bar" aria-hidden="true"><i style="width:' + Math.min(100, p.score / g.target * 100) + '%"></i></div>' +
           '<div class="dots" title="Lancers manqués d\'affilée : ' + p.misses + '/3">' + dots + '</div>' +
         '</div>' +
       '</div>';
     }).join('');
 
     $('current-name').textContent = g.players[g.current].name;
-    $('turn-label').textContent = 'Tour ' + g.turn;
+    $('turn-label').textContent = (g.level > 0 ? 'Barrage' + (g.level > 1 ? ' n°' + g.level : '') + ' · ' : '') + 'Tour ' + g.turn;
 
     // Quilles
     $('pins').innerHTML = PIN_ROWS.map(function (row) {
@@ -633,6 +720,7 @@
     // Historique
     var hist = g.log.slice().reverse();
     $('history').innerHTML = hist.map(function (h) {
+      if (h.sep) return '<li class="sep">' + esc(h.sep) + '</li>';
       var det = h.pins.length === 0 ? 'Manqué'
         : (h.pins.length === 1 ? 'Quille n°' + h.pins[0] : plural(h.pins.length, 'quille') + ' (' + h.pins.join(', ') + ')');
       return '<li>' +
@@ -653,7 +741,10 @@
     var p = g.players[g.current];
     var pins = selected.slice().sort(function (a, b) { return a - b; });
     var pts = pointsFor(pins);
+    var lastOfRound = nextInRound(g, g.pos) === -1;
+    var reached = reachedList(g);
     var html;
+    var reachesTarget = false;
 
     if (pins.length === 0) {
       var m = p.misses + 1;
@@ -661,9 +752,11 @@
       if (m >= 3) {
         if (g.missMode === 'elim') {
           html += '<span class="bad">3e lancer manqué : ' + esc(p.name) + ' sera éliminé</span>';
-          if (activeIndexes(g).length === 2) {
-            var other = g.players[activeIndexes(g).filter(function (i) { return i !== g.current; })[0]];
-            html += '<span class="win">' + esc(other.name) + ' gagnera la partie</span>';
+          var alive = inPlay(g);
+          if (alive.length === 2) {
+            var other = alive[0] === g.current ? alive[1] : alive[0];
+            html += '<span class="win">' + esc(g.players[other].name) + ' gagnera la partie</span>';
+            lastOfRound = false; // la fin de partie est déjà annoncée
           }
         } else {
           html += '<span class="bad">3e lancer manqué : retour à 0</span>';
@@ -671,17 +764,29 @@
       }
       $('validate-btn').textContent = 'Manqué (0)';
     } else {
-      var total = p.score + pts;
       var res = scoreThrow(g, pts);
-      html = pins.length === 1
-        ? '1 quille (n°' + pins[0] + ') : ' + pts + ' pts · total ' + total
-        : plural(pins.length, 'quille') + ' : ' + pts + ' pts · total ' + total;
-      if (res.over) html += '<span class="warn">Dépasse 50 : retour à ' + BACK_TO + '</span>';
-      else if (res.total === TARGET) html += '<span class="win">50 pile : victoire !</span>';
+      html = (pins.length === 1
+        ? '1 quille (n°' + pins[0] + ') : ' + pts + ' pts'
+        : plural(pins.length, 'quille') + ' : ' + pts + ' pts') + ' · total ' + (p.score + pts);
+      if (res.over) {
+        html += '<span class="warn">Dépasse ' + g.target + ' : retour à ' + g.back + '</span>';
+      } else if (res.total === g.target) {
+        reachesTarget = true;
+        if (!lastOfRound) html += '<span class="win">Atteint ' + g.target + ' ! On finit le tour</span>';
+        else if (reached.length > 0) html += '<span class="win">Égalité à ' + g.target + ' → barrage</span>';
+        else html += '<span class="win">Victoire !</span>';
+      }
       res.victims.forEach(function (v) {
         html += '<span class="bad">' + esc(batardText(g, v)) + '</span>';
       });
       $('validate-btn').textContent = 'Valider : +' + pts;
+    }
+
+    // Dernier lancer du tour alors que quelqu'un a déjà l'objectif
+    if (lastOfRound && !reachesTarget && reached.length === 1) {
+      html += '<span class="win">Fin du tour : ' + esc(g.players[reached[0]].name) + ' gagne</span>';
+    } else if (lastOfRound && !reachesTarget && reached.length > 1) {
+      html += '<span class="win">Fin du tour : barrage entre ' + esc(nameList(g, reached)) + '</span>';
     }
     $('preview').innerHTML = html;
   }
@@ -711,16 +816,15 @@
     if (pts > 0) {
       p.misses = 0;
       var res = scoreThrow(g, pts);
-      var total = res.total;
-      if (res.over) notes.push('dépasse 50 → retour à ' + BACK_TO);
+      if (res.over) notes.push('dépasse ' + g.target + ' → retour à ' + g.back);
       res.victims.forEach(function (v) {
         notes.push(batardText(g, v));
         g.players[v.i].score = v.to;
       });
-      p.score = total;
-      if (total === TARGET) {
-        g.winner = g.current;
-        notes.push('50 pile : victoire !');
+      p.score = res.total;
+      if (p.score === g.target) {
+        p.done = true;
+        notes.push(g.target + ' atteint !');
       }
     } else {
       p.misses += 1;
@@ -740,26 +844,69 @@
 
     var entry = { name: p.name, pins: pins, pts: pts, total: p.score, notes: notes };
     g.log.push(entry);
-
-    if (g.winner === null) {
-      var active = activeIndexes(g);
-      if (active.length === 1) {
-        g.winner = active[0];
-        entry.notes.push(g.players[active[0]].name + ' est le dernier en jeu : victoire !');
-      } else {
-        // joueur suivant non éliminé
-        var n = g.players.length;
-        var next = g.current;
-        do { next = (next + 1) % n; } while (g.players[next].eliminated);
-        if (next <= g.current) g.turn += 1;
-        g.current = next;
-      }
-    }
+    advance(g, entry);
 
     selected = [];
     save();
     render();
-    if (g.winner !== null) window.scrollTo(0, 0);
+    if (g.winner !== null || g.log[g.log.length - 1].sep) window.scrollTo(0, 0);
+  }
+
+  // Passe au lanceur suivant, termine le tour, lance un barrage ou désigne le gagnant.
+  function advance(g, entry) {
+    var alive = inPlay(g);
+    if (alive.length === 1) {
+      var w = g.players[alive[0]];
+      g.winner = alive[0];
+      g.winReason = w.done ? (g.level ? 'playoff' : 'target') : 'last';
+      entry.notes.push(w.done ? w.name + ' gagne !' : w.name + ' est le dernier en jeu : victoire !');
+      return;
+    }
+
+    var nx = nextInRound(g, g.pos);
+    if (nx !== -1) {
+      g.pos = nx;
+      g.current = g.order[nx];
+      return;
+    }
+
+    // Fin du tour
+    var reached = reachedList(g);
+    if (reached.length === 1) {
+      g.winner = reached[0];
+      g.winReason = g.level ? 'playoff' : 'target';
+      entry.notes.push(reached[0] === g.current ? 'victoire !'
+        : 'fin du tour : ' + g.players[reached[0]].name + ' gagne !');
+      return;
+    }
+    if (reached.length > 1) {
+      startPlayoff(g, reached);
+      return;
+    }
+    g.turn += 1;
+    g.pos = nextInRound(g, -1);
+    g.current = g.order[g.pos];
+  }
+
+  function startPlayoff(g, finalists) {
+    g.log.push({
+      sep: 'Égalité à ' + g.target + ' entre ' + nameList(g, finalists) +
+        ' : barrage, premier à ' + PLAYOFF.target + ' !'
+    });
+    finalists.forEach(function (i) {
+      var p = g.players[i];
+      p.past.push(p.score);
+      p.score = 0;
+      p.misses = 0;
+      p.done = false;
+    });
+    g.level += 1;
+    g.target = PLAYOFF.target;
+    g.back = PLAYOFF.back;
+    g.order = finalists.slice();
+    g.turn = 1;
+    g.pos = 0;
+    g.current = g.order[0];
   }
 
   function undoLast() {
@@ -785,24 +932,40 @@
   });
 
   // ---------- Écran 3 : victoire ----------
+  var WIN_REASONS = {
+    target: 'Pile ' + MAIN.target + ' points',
+    playoff: 'Vainqueur du barrage, pile ' + PLAYOFF.target,
+    last: 'Dernier joueur encore en jeu'
+  };
+
+  // « 50 · barrage 12 » pour un finaliste, sinon simplement le score
+  function scoreLabel(p) {
+    var parts = p.past.concat([p.score]);
+    return parts.map(function (s, k) { return k === 0 ? String(s) : 'barrage ' + s; }).join(' · ');
+  }
+
   function renderWin() {
     var g = state.game;
     $('mode-tag-win').textContent = MODE_LABELS[g.gameMode];
     $('winner-name').textContent = g.players[g.winner].name;
+    $('win-reason').textContent = WIN_REASONS[g.winReason] || '';
 
     var order = g.players.map(function (p, i) { return { p: p, i: i }; });
     order.sort(function (a, b) {
       if (a.i === g.winner) return -1;
       if (b.i === g.winner) return 1;
+      if (a.p.past.length !== b.p.past.length) return b.p.past.length - a.p.past.length; // finalistes d'abord
       if (a.p.eliminated !== b.p.eliminated) return a.p.eliminated ? 1 : -1;
-      return b.p.score - a.p.score;
+      if (a.p.score !== b.p.score) return b.p.score - a.p.score;
+      return a.i - b.i;
     });
     $('ranking').innerHTML = order.map(function (o, k) {
       var cls = (o.i === g.winner ? 'first' : '') + (o.p.eliminated ? ' out' : '');
+      var tag = o.p.eliminated ? '<span class="tag">' + (o.p.past.length ? 'éliminé au barrage' : 'éliminé') + '</span>' : '';
       return '<li class="' + cls + '">' +
         '<span class="rk">' + (k + 1) + '</span>' +
-        '<span class="pname">' + esc(o.p.name) + (o.p.eliminated ? '<span class="tag">éliminé</span>' : '') + '</span>' +
-        '<span class="rs">' + o.p.score + '</span>' +
+        '<span class="pname">' + esc(o.p.name) + tag + '</span>' +
+        '<span class="rs">' + scoreLabel(o.p) + '</span>' +
         '</li>';
     }).join('');
 
