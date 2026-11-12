@@ -1,3 +1,5 @@
+![Mölkky](icons/logo-clair.jpg)
+
 # Mölkky – Compteur de points
 
 Application web, pensée pour le téléphone, pour compter les points d'une partie de Mölkky.

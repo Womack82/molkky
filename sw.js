@@ -1,10 +1,11 @@
 // Service worker : garde l'app en cache pour qu'elle marche sans réseau.
 // Changer CACHE à chaque mise à jour des fichiers listés pour forcer les téléphones à les recharger.
-const CACHE = 'molkky-v1';
+const CACHE = 'molkky-v2';
 const ASSETS = [
   './',
   'index.html',
   'manifest.webmanifest',
+  'icons/icone-1024.jpg',
   'icons/icone-32.jpg',
   'icons/icone-180.jpg',
   'icons/icone-192.jpg',
