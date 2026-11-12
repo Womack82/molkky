@@ -500,6 +500,32 @@
     100% { transform: rotate(-2deg) translateY(0) scale(1); opacity: 1; }
   }
 
+  /* Message 3 lancers manqués d'affilée */
+  .miss-card {
+    background: var(--bg); color: var(--text);
+    border: 3px solid var(--rose);
+    border-radius: 28px; width: 100%; max-width: 340px;
+    padding: 24px 22px 22px; text-align: center;
+    transform: rotate(1.5deg);
+  }
+  .miss-dots { display: flex; justify-content: center; gap: 10px; margin-bottom: 14px; }
+  .miss-dots i { width: 18px; height: 18px; border-radius: 50%; background: var(--rose); }
+  .pascal-back.show .miss-card { animation: miss-pop .6s ease-out both; }
+  .pascal-back.show .miss-dots i { animation: dot-pop .35s cubic-bezier(.34, 1.56, .64, 1) both; }
+  .pascal-back.show .miss-dots i:nth-child(2) { animation-delay: .12s; }
+  .pascal-back.show .miss-dots i:nth-child(3) { animation-delay: .24s; }
+  .miss-text { margin: 0; font-size: 30px; font-weight: 700; line-height: 1.1; }
+  .miss-sub { margin-top: 10px; font-size: 17px; font-weight: 600; color: var(--rose); }
+  .pascal-back.show .miss-sub { animation: rise-in .3s ease-out .45s both; }
+  @keyframes miss-pop {
+    0% { transform: rotate(1.5deg) scale(.75); opacity: 0; }
+    35% { transform: rotate(1.5deg) scale(1.03); opacity: 1; }
+    50% { transform: rotate(1.5deg) translateX(-8px); }
+    65% { transform: rotate(1.5deg) translateX(7px); }
+    80% { transform: rotate(1.5deg) translateX(-4px); }
+    100% { transform: rotate(1.5deg) translateX(0); opacity: 1; }
+  }
+
   /* Réglage « réduire les animations » du téléphone : aucune animation */
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
@@ -701,6 +727,15 @@
   </div>
 </div>
 
+<!-- Message 3 lancers manqués d'affilée -->
+<div class="pascal-back hidden" id="miss-layer" role="status" aria-live="polite">
+  <div class="miss-card">
+    <div class="miss-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+    <p class="miss-text" id="miss-text"></p>
+    <div class="miss-sub" id="miss-sub"></div>
+  </div>
+</div>
+
 <!-- Private joke : exactement 2 quilles -->
 <div class="pascal-back hidden" id="pascal" role="status" aria-live="polite">
   <div class="pascal-card">
@@ -713,7 +748,7 @@
 (function () {
   'use strict';
 
-  var APP_VERSION = '1.7'; // à augmenter à chaque mise à jour (1.1, 1.2...)
+  var APP_VERSION = '1.8'; // à augmenter à chaque mise à jour (1.1, 1.2...)
   var STORAGE_KEY = 'molkky-compteur-v1';
   var MAIN = { target: 50, back: 25 };     // partie principale
   var PLAYOFF = { target: 12, back: 6 };   // barrage
@@ -1254,10 +1289,13 @@
       return g.players[i].name + ' retombe à ' + g.players[i].score;
     });
     var overLine = fx.over ? p.name + ' : ' + fx.raw + ' → retour à ' + g.back : '';
+    var missLine = pts === 0 && before[thrower].misses === 2
+      ? (p.eliminated ? p.name + ' est hors jeu' : p.name + ' retombe à 0') : '';
     fx = null;
-    // Un seul message à la fois : Bâtard, puis dépassement, puis Pascal
+    // Un seul message à la fois : Bâtard, puis dépassement, puis 3 ratés, puis Pascal
     if (fell.length) showBatard(fell);
     else if (overLine) showOver(overLine);
+    else if (missLine) showMiss(missLine);
     else if (pins.length === 2) showPascal(pins);
   }
 
@@ -1488,7 +1526,15 @@
   $('pascal').addEventListener('click', hidePascal);
 
   // ---------- Message Bâtard : un joueur égalé retombe ----------
-  var BATARD_LINES = ['Oh non !', 'Pas de chance !'];
+  var BATARD_LINES = [
+    'Oh non !',
+    'Pas de chance !',
+    'Sans pitié !',
+    'Quelle trahison !',
+    'Fallait pas être là !',
+    'Retour à l\'envoyeur !',
+    'Ça, c\'est bas !'
+  ];
   var batardTimer = null;
 
   function showBatard(fell) {
@@ -1535,6 +1581,34 @@
     $('over-layer').classList.remove('show');
   }
   $('over-layer').addEventListener('click', hideOver);
+
+  // ---------- Message 3 lancers manqués d'affilée ----------
+  var MISS_LINES = [
+    'Jamais deux sans trois…',
+    'Trois fois rien !',
+    'Les quilles te boudent !',
+    'Triple zéro !',
+    'Même le vent a fait mieux',
+    'C\'est pas ton jour !'
+  ];
+  var missTimer = null;
+
+  function showMiss(line) {
+    var el = $('miss-layer');
+    $('miss-text').textContent = MISS_LINES[Math.floor(Math.random() * MISS_LINES.length)];
+    $('miss-sub').textContent = line;
+    el.classList.remove('hidden', 'show');
+    void el.offsetWidth;
+    el.classList.add('show');
+    clearTimeout(missTimer);
+    missTimer = setTimeout(hideMiss, 3000);
+  }
+  function hideMiss() {
+    clearTimeout(missTimer);
+    $('miss-layer').classList.add('hidden');
+    $('miss-layer').classList.remove('show');
+  }
+  $('miss-layer').addEventListener('click', hideMiss);
 
   // Passe au lanceur suivant, termine le tour, lance un barrage ou désigne le gagnant.
   function advance(g, entry) {
