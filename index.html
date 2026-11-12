@@ -483,6 +483,23 @@
     100% { transform: rotate(2deg) scale(1); }
   }
 
+  /* Message dépassement : au-delà de l'objectif */
+  .over-card {
+    background: var(--text); color: var(--bg);
+    border-radius: 28px; width: 100%; max-width: 340px;
+    padding: 26px 22px 24px; text-align: center;
+    transform: rotate(-2deg);
+  }
+  .pascal-back.show .over-card { animation: over-pop .6s cubic-bezier(.34, 1.56, .64, 1) both; }
+  .over-text { margin: 0; font-size: 30px; font-weight: 700; line-height: 1.1; }
+  .over-sub { margin-top: 10px; font-size: 17px; font-weight: 600; color: var(--sage); }
+  .pascal-back.show .over-sub { animation: rise-in .3s ease-out .4s both; }
+  @keyframes over-pop {
+    0% { transform: rotate(-2deg) translateY(-60px) scale(.8); opacity: 0; }
+    55% { transform: rotate(-2deg) translateY(10px) scale(1.04); opacity: 1; }
+    100% { transform: rotate(-2deg) translateY(0) scale(1); opacity: 1; }
+  }
+
   /* Réglage « réduire les animations » du téléphone : aucune animation */
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
@@ -676,6 +693,14 @@
   </div>
 </div>
 
+<!-- Message dépassement : au-delà de l'objectif -->
+<div class="pascal-back hidden" id="over-layer" role="status" aria-live="polite">
+  <div class="over-card">
+    <p class="over-text" id="over-text"></p>
+    <div class="over-sub" id="over-sub"></div>
+  </div>
+</div>
+
 <!-- Private joke : exactement 2 quilles -->
 <div class="pascal-back hidden" id="pascal" role="status" aria-live="polite">
   <div class="pascal-card">
@@ -688,7 +713,7 @@
 (function () {
   'use strict';
 
-  var APP_VERSION = '1.6'; // à augmenter à chaque mise à jour (1.1, 1.2...)
+  var APP_VERSION = '1.7'; // à augmenter à chaque mise à jour (1.1, 1.2...)
   var STORAGE_KEY = 'molkky-compteur-v1';
   var MAIN = { target: 50, back: 25 };     // partie principale
   var PLAYOFF = { target: 12, back: 6 };   // barrage
@@ -1228,9 +1253,11 @@
     var fell = fx.playoff ? [] : fx.victims.map(function (i) {
       return g.players[i].name + ' retombe à ' + g.players[i].score;
     });
+    var overLine = fx.over ? p.name + ' : ' + fx.raw + ' → retour à ' + g.back : '';
     fx = null;
-    // Un seul message à la fois : le Bâtard passe avant Pascal
+    // Un seul message à la fois : Bâtard, puis dépassement, puis Pascal
     if (fell.length) showBatard(fell);
+    else if (overLine) showOver(overLine);
     else if (pins.length === 2) showPascal(pins);
   }
 
@@ -1480,6 +1507,34 @@
     $('batard-layer').classList.remove('show');
   }
   $('batard-layer').addEventListener('click', hideBatard);
+
+  // ---------- Message dépassement : au-delà de l'objectif ----------
+  var OVER_LINES = [
+    'Tu es allé trop loin !',
+    'Un peu trop gourmand !',
+    'Ça déborde !',
+    'Trop fort, trop loin !',
+    'Retour à la case départ… ou presque !',
+    'Fallait viser moins haut !'
+  ];
+  var overTimer = null;
+
+  function showOver(line) {
+    var el = $('over-layer');
+    $('over-text').textContent = OVER_LINES[Math.floor(Math.random() * OVER_LINES.length)];
+    $('over-sub').textContent = line;
+    el.classList.remove('hidden', 'show');
+    void el.offsetWidth;
+    el.classList.add('show');
+    clearTimeout(overTimer);
+    overTimer = setTimeout(hideOver, 3000);
+  }
+  function hideOver() {
+    clearTimeout(overTimer);
+    $('over-layer').classList.add('hidden');
+    $('over-layer').classList.remove('show');
+  }
+  $('over-layer').addEventListener('click', hideOver);
 
   // Passe au lanceur suivant, termine le tour, lance un barrage ou désigne le gagnant.
   function advance(g, entry) {
