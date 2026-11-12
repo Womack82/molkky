@@ -54,7 +54,31 @@
   }
   .app-version { font-size: 12px; font-weight: 500; color: var(--text-2); margin-left: -4px; align-self: flex-end; padding-bottom: 3px; }
   .logo { width: 32px; height: 32px; flex: none; display: block; }
-  .subtitle { margin: -10px 0 16px; color: var(--text-2); }
+  /* Logo centré de l'écran Réglages (recadré sur le logo-clair.jpg) */
+  .hero { display: flex; justify-content: center; align-items: flex-end; gap: 6px; margin: 10px 0 20px; }
+  .hero-logo {
+    --s: .2019; /* 210 px affichés pour les 1040 px utiles de l'image */
+    width: calc(1040px * var(--s)); height: calc(300px * var(--s));
+    overflow: hidden; opacity: .85; flex: none;
+  }
+  .hero-logo img {
+    display: block; width: calc(1800px * var(--s)); height: auto; max-width: none;
+    margin: calc(-150px * var(--s)) 0 0 calc(-380px * var(--s));
+  }
+  .hero .app-version { margin: 0; padding-bottom: 2px; align-self: flex-end; }
+
+  /* Rappel des règles repliable */
+  .rules-card summary {
+    list-style: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    min-height: 44px; margin: -6px 0;
+  }
+  .rules-card summary::-webkit-details-marker { display: none; }
+  .rules-card summary h2 { margin: 0; }
+  .rules-card summary:focus-visible { outline: 3px solid var(--text); outline-offset: 4px; border-radius: 8px; }
+  .rules-card .chevron { flex: none; transition: transform .2s; }
+  .rules-card[open] .chevron { transform: rotate(180deg); }
+  .rules-card[open] ul.rules { margin-top: 14px; }
   h2 { font-size: 18px; font-weight: 600; margin: 0 0 12px; }
 
   .mode-tag {
@@ -316,10 +340,11 @@
 
   <!-- ÉCRAN 1 : RÉGLAGES -->
   <section id="screen-setup">
-    <header class="top">
-      <div class="brand-wrap"><h1 class="brand"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg>Mölkky</h1><span class="app-version"></span></div>
+    <header class="hero">
+      <h1 class="sr">Mölkky – Compteur de points</h1>
+      <div class="hero-logo"><img src="icons/logo-clair.jpg" alt="" width="1800" height="600"></div>
+      <span class="app-version"></span>
     </header>
-    <p class="subtitle">Compteur de points</p>
 
     <div class="modes" role="radiogroup" aria-label="Mode de jeu">
       <label class="mode">
@@ -350,8 +375,11 @@
       </div>
     </div>
 
-    <div class="card">
-      <h2>Rappel des règles</h2>
+    <details class="card rules-card">
+      <summary>
+        <h2>Rappel des règles</h2>
+        <svg class="chevron" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+      </summary>
       <ul class="rules">
         <li>1 seule quille tombée : on marque son numéro.</li>
         <li>Plusieurs quilles tombées : on marque le nombre de quilles.</li>
@@ -362,7 +390,7 @@
         <li>Plusieurs joueurs à 50 : barrage entre eux, premier à <strong>exactement 12</strong> (au-delà, retour à 6), avec la même règle de fin de tour.</li>
         <li>Le dernier joueur encore en jeu gagne.</li>
       </ul>
-    </div>
+    </details>
 
     <button class="primary big" id="start-btn">Commencer la partie</button>
   </section>
@@ -462,7 +490,7 @@
 (function () {
   'use strict';
 
-  var APP_VERSION = '1.0'; // à augmenter à chaque mise à jour (1.1, 1.2...)
+  var APP_VERSION = '1.1'; // à augmenter à chaque mise à jour (1.1, 1.2...)
   var STORAGE_KEY = 'molkky-compteur-v1';
   var MAIN = { target: 50, back: 25 };     // partie principale
   var PLAYOFF = { target: 12, back: 6 };   // barrage

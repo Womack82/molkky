@@ -1,6 +1,6 @@
 // Service worker : garde l'app en cache pour qu'elle marche sans réseau.
 // Changer CACHE à chaque mise à jour des fichiers listés pour forcer les téléphones à les recharger.
-const CACHE = 'molkky-1.0'; // suit la version de l'app (APP_VERSION dans index.html)
+const CACHE = 'molkky-1.1'; // suit la version de l'app (APP_VERSION dans index.html)
 const ASSETS = [
   './',
   'index.html',
@@ -9,7 +9,8 @@ const ASSETS = [
   'icons/icone-32.jpg',
   'icons/icone-180.jpg',
   'icons/icone-192.jpg',
-  'icons/icone-512.jpg'
+  'icons/icone-512.jpg',
+  'icons/logo-clair.jpg'
 ];
 
 self.addEventListener('install', (event) => {
