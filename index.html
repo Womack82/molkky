@@ -526,6 +526,129 @@
     100% { transform: rotate(1.5deg) translateX(0); opacity: 1; }
   }
 
+  /* Bouton Réglages (roue dentée) */
+  .gear-btn {
+    width: 44px; height: 44px; min-width: 44px; min-height: 44px; padding: 0;
+    border: 0; border-radius: 50%; background: var(--card); color: var(--text);
+    display: inline-grid; place-items: center; flex: none;
+  }
+  .gear-btn svg { width: 24px; height: 24px; transition: transform .28s ease-out; }
+  .gear-btn:active svg { transform: rotate(60deg); }
+  .hero { position: relative; }
+  .gear-float { position: absolute; right: 0; top: 50%; margin-top: -22px; }
+  .head-btns { display: flex; gap: 8px; align-items: center; flex: none; }
+  @media (max-width: 400px) {
+    .head-btns #new-game-btn { max-width: 112px; padding: 4px 10px; line-height: 1.15; }
+  }
+
+  /* Panneau Réglages : descend du haut */
+  dialog { color: var(--text); font: inherit; }
+  dialog::backdrop { background: var(--backdrop); }
+  .sheet {
+    margin: 0 auto; top: 0; bottom: auto; border: 0; padding: 0;
+    width: 100%; max-width: 560px; max-height: 90vh;
+    background: var(--bg); border-radius: 0 0 24px 24px;
+  }
+  .sheet[open] { animation: sheet-down .26s cubic-bezier(.2, .8, .3, 1); }
+  .sheet[open]::backdrop { animation: pascal-fade .2s ease-out; }
+  .sheet-in:focus, .notes-in:focus { outline: none; }
+  .sheet-in { padding: calc(env(safe-area-inset-top) + 12px) 16px 18px; }
+  .sheet-head { display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; margin-bottom: 14px; }
+  .sheet-head h2 { margin: 0; text-align: center; grid-column: 2; }
+  .sheet-head #settings-back { grid-column: 1; grid-row: 1; }
+  .sheet-head #settings-close { grid-column: 3; grid-row: 1; }
+  .round {
+    width: 44px; height: 44px; min-width: 44px; min-height: 44px; padding: 0;
+    border: 0; border-radius: 50%; background: var(--card); color: var(--text);
+    display: inline-grid; place-items: center;
+  }
+  .round[hidden] { display: none; }
+  #view-menu, #view-lang { display: grid; gap: 6px; }
+  #view-menu[hidden], #view-lang[hidden] { display: none; }
+  .set-row {
+    display: flex; align-items: center; gap: 12px; width: 100%;
+    min-height: 56px; padding: 0 14px; border: 0; border-radius: 16px;
+    background: var(--card); text-align: left; font-weight: 600;
+  }
+  .set-ico { width: 34px; height: 34px; border-radius: 10px; background: var(--sage); display: grid; place-items: center; flex: none; }
+  .set-txt { flex: 1; }
+  .set-val { color: var(--text-2); font-weight: 500; }
+  .set-chev { color: var(--line); flex: none; }
+  .badge {
+    min-width: 26px; height: 26px; padding: 0 8px; border-radius: 99px;
+    background: var(--rose); color: var(--on-rose); font-size: 14px;
+    display: inline-grid; place-items: center;
+  }
+  .badge.zero { background: var(--bg); color: var(--text-2); }
+  .set-check { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--line); flex: none; }
+  .set-row[aria-checked="true"] .set-check {
+    border-color: var(--text); background: var(--text)
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23AFD5AA' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center / 16px no-repeat;
+  }
+  .view-in { animation: view-in .22s ease-out; }
+  @keyframes sheet-down { from { transform: translateY(-100%); } to { transform: none; } }
+  @keyframes view-in { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: none; } }
+
+  /* Page Notes */
+  .notes-page {
+    margin: 0; border: 0; padding: 0;
+    width: 100%; height: 100%; max-width: none; max-height: none;
+    background: var(--bg);
+  }
+  .notes-page[open] { animation: view-in .24s ease-out; }
+  .notes-in {
+    max-width: 560px; margin: 0 auto;
+    padding: calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 40px);
+  }
+  .notes-bar { display: flex; justify-content: space-between; align-items: center; position: relative; }
+  .notes-menu {
+    position: absolute; right: 0; top: 52px; z-index: 2;
+    background: var(--card); border-radius: 16px; padding: 6px; min-width: 250px;
+    box-shadow: 0 8px 28px rgba(92, 83, 70, .25); display: grid;
+  }
+  .notes-menu[hidden] { display: none; }
+  .notes-menu button { border: 0; text-align: left; border-radius: 10px; font-weight: 500; }
+  .notes-menu button.danger { color: var(--rose); font-weight: 600; }
+  .notes-title { font-size: 30px; font-weight: 700; margin: 14px 0 10px; }
+  .notes-msg { margin: 0 0 10px; padding: 8px 12px; border-radius: 12px; background: var(--text); color: var(--bg); font-weight: 500; }
+  .notes-msg[hidden] { display: none; }
+  .notes-list { list-style: none; margin: 0; padding: 0; }
+  .notes-list[hidden] { display: none; }
+  .note {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 8px 0; border-bottom: 1px solid rgba(166, 159, 152, .45);
+  }
+  .note-circle {
+    width: 26px; height: 26px; min-width: 26px; min-height: 26px; margin: 9px; padding: 0;
+    border-radius: 50%; border: 2px solid var(--line); background: transparent; flex: none;
+    position: relative;
+  }
+  .note-circle::before { content: ""; position: absolute; inset: -10px; } /* zone de toucher élargie */
+  .note-circle.add { border-style: dashed; }
+  .note.checked .note-circle { border-color: var(--text); background: var(--sage); }
+  .note.checked .note-circle::after {
+    content: ""; position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235C5346' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center / 15px no-repeat;
+  }
+  .note.checked .note-text { color: var(--text-2); text-decoration: line-through; }
+  .note.pop .note-circle { animation: dot-pop .3s cubic-bezier(.34, 1.56, .64, 1); }
+  .note-text {
+    flex: 1; min-width: 0; resize: none; overflow: hidden;
+    font: inherit; font-size: 17px; color: var(--text);
+    border: 0; background: transparent; padding: 10px 0; min-height: 44px; line-height: 1.4;
+  }
+  .note-text:focus { outline: none; }
+  .note-text::placeholder { color: var(--text-2); }
+  .notes-empty { margin: 14px 0; }
+  .notes-empty[hidden], .notes-done[hidden] { display: none; }
+  .notes-done { margin-top: 20px; }
+  .notes-toggle {
+    width: 100%; border: 0; display: flex; justify-content: space-between; align-items: center;
+    padding: 0 4px; color: var(--text-2);
+  }
+  .notes-chev { transition: transform .2s; }
+  .notes-toggle[aria-expanded="true"] .notes-chev { transform: rotate(90deg); }
+
   /* Réglage « réduire les animations » du téléphone : aucune animation */
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
@@ -555,64 +678,70 @@
       <text x="40" y="75.9">1</text><text x="60" y="75.9">2</text>
     </g>
   </symbol>
+  <!-- Roue dentée (bouton Réglages) -->
+  <symbol id="gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+    <circle cx="12" cy="12" r="3"/>
+  </symbol>
 </svg>
 <div class="app">
 
   <!-- ÉCRAN 1 : RÉGLAGES -->
   <section id="screen-setup">
     <header class="hero">
-      <h1 class="sr">Mölkky – Compteur de points</h1>
+      <h1 class="sr" data-i18n="title">Mölkky – Compteur de points</h1>
       <div class="hero-logo"><img src="icons/logo-clair.jpg" alt="" width="1800" height="600"></div>
       <span class="app-version"></span>
+      <button type="button" class="gear-btn gear-float" data-i18n-aria="settings" aria-label="Réglages"><svg aria-hidden="true"><use href="#gear"/></svg></button>
     </header>
 
-    <div class="modes" role="radiogroup" aria-label="Mode de jeu">
+    <div class="modes" role="radiogroup" aria-label="Mode de jeu" data-i18n-aria="modeAria">
       <label class="mode">
         <input type="radio" name="game-mode" value="classic">
-        <span><strong>Classique</strong><small>Règles officielles</small></span>
+        <span><strong data-i18n="mode.classic">Classique</strong><small data-i18n="mode.classicSub">Règles officielles</small></span>
       </label>
       <label class="mode">
         <input type="radio" name="game-mode" value="batard">
-        <span><strong>Bâtard</strong><small>Égaliser fait tomber l'autre</small></span>
+        <span><strong data-i18n="mode.batard">Bâtard</strong><small data-i18n="mode.batardSub">Égaliser fait tomber l'autre</small></span>
       </label>
     </div>
 
     <div class="card">
-      <h2>Joueurs</h2>
+      <h2 data-i18n="players">Joueurs</h2>
       <form id="add-form" class="row" autocomplete="off">
-        <input type="text" id="player-input" maxlength="30" placeholder="Nom du joueur ou de l'équipe" aria-label="Nom du joueur ou de l'équipe">
-        <button type="submit" class="primary">Ajouter</button>
+        <input type="text" id="player-input" maxlength="30" placeholder="Nom du joueur ou de l'équipe" aria-label="Nom du joueur ou de l'équipe" data-i18n-ph="playerPh" data-i18n-aria="playerPh">
+        <button type="submit" class="primary" data-i18n="add">Ajouter</button>
       </form>
       <ol class="players" id="player-list"></ol>
-      <p class="muted empty" id="player-empty">Ajoutez au moins 2 joueurs. L'ordre de la liste est l'ordre de jeu.</p>
+      <p class="muted empty" id="player-empty" data-i18n="playersEmpty">Ajoutez au moins 2 joueurs. L'ordre de la liste est l'ordre de jeu.</p>
     </div>
 
     <div class="card">
-      <h2>3 lancers manqués d'affilée</h2>
-      <div class="segmented" role="radiogroup">
-        <label><input type="radio" name="miss-mode" value="elim"><span>Éliminé</span></label>
-        <label><input type="radio" name="miss-mode" value="zero"><span>Retour à 0</span></label>
+      <h2 data-i18n="missTitle">3 lancers manqués d'affilée</h2>
+      <div class="segmented" role="radiogroup" aria-label="3 lancers manqués d'affilée" data-i18n-aria="missTitle">
+        <label><input type="radio" name="miss-mode" value="elim"><span data-i18n="missElim">Éliminé</span></label>
+        <label><input type="radio" name="miss-mode" value="zero"><span data-i18n="missZero">Retour à 0</span></label>
       </div>
     </div>
 
     <details class="card rules-card">
       <summary>
-        <h2>Rappel des règles</h2>
+        <h2 data-i18n="rulesTitle">Rappel des règles</h2>
         <svg class="chevron" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
       </summary>
       <ul class="rules">
-        <li>1 seule quille tombée : on marque son numéro.</li>
-        <li>Plusieurs quilles tombées : on marque le nombre de quilles.</li>
-        <li>Il faut atteindre <strong>exactement 50</strong>. Au-delà, on retombe à 25.</li>
+        <li data-i18n="rule1">1 seule quille tombée : on marque son numéro.</li>
+        <li data-i18n="rule2">Plusieurs quilles tombées : on marque le nombre de quilles.</li>
+        <li data-i18n-html="rule3">Il faut atteindre <strong>exactement 50</strong>. Au-delà, on retombe à 25.</li>
         <li id="rule-miss"></li>
-        <li id="rule-batard"><strong>Mode Bâtard :</strong> si votre nouveau score égale celui d'un autre joueur en jeu, il retombe à 0 (s'il avait de 0 à 24) ou à 25 (de 25 à 49). En barrage : 0 (de 0 à 5) ou 6 (de 6 à 11). Ne s'applique pas sur un lancer manqué.</li>
-        <li>Quand un joueur atteint 50, on finit le tour : les joueurs suivants peuvent encore égaler. Seul à 50 : il gagne.</li>
-        <li>Plusieurs joueurs à 50 : barrage entre eux, premier à <strong>exactement 12</strong> (au-delà, retour à 6), avec la même règle de fin de tour.</li>
-        <li>Le dernier joueur encore en jeu gagne.</li>
+        <li id="rule-batard" data-i18n-html="ruleBatard"></li>
+        <li data-i18n="rule4">Quand un joueur atteint 50, on finit le tour : les joueurs suivants peuvent encore égaler. Seul à 50 : il gagne.</li>
+        <li data-i18n-html="rule5">Plusieurs joueurs à 50 : barrage entre eux, premier à <strong>exactement 12</strong> (au-delà, retour à 6), avec la même règle de fin de tour.</li>
+        <li data-i18n="rule6">Le dernier joueur encore en jeu gagne.</li>
       </ul>
     </details>
 
-    <button class="primary big" id="start-btn">Commencer la partie</button>
+    <button class="primary big" id="start-btn" data-i18n="start">Commencer la partie</button>
   </section>
 
   <!-- ÉCRAN 2 : PARTIE -->
@@ -622,7 +751,10 @@
         <h1 class="brand"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg>Mölkky</h1><span class="app-version"></span>
         <span id="mode-tag-game"></span>
       </div>
-      <button id="new-game-btn">Nouvelle partie</button>
+      <div class="head-btns">
+        <button id="new-game-btn" data-i18n="newGame">Nouvelle partie</button>
+        <button type="button" class="gear-btn" data-i18n-aria="settings" aria-label="Réglages"><svg aria-hidden="true"><use href="#gear"/></svg></button>
+      </div>
     </header>
 
     <div id="banners" aria-live="polite"></div>
@@ -636,21 +768,21 @@
 
     <div class="card">
       <div class="turnline">
-        <div>Au tour de <span class="who" id="current-name"></span></div>
+        <div><span data-i18n="turnOf">Au tour de</span> <span class="who" id="current-name"></span></div>
         <div id="turn-label"></div>
       </div>
       <div class="pins" id="pins"></div>
       <div class="preview" id="preview" aria-live="polite"></div>
       <div class="actions">
-        <button id="undo-btn">Annuler</button>
+        <button id="undo-btn" data-i18n="undo">Annuler</button>
         <button class="primary" id="validate-btn"></button>
       </div>
     </div>
 
     <div class="card">
-      <h2>Historique</h2>
+      <h2 data-i18n="history">Historique</h2>
       <ol class="history" id="history"></ol>
-      <p class="muted" id="history-empty">Aucun lancer pour l'instant.</p>
+      <p class="muted" id="history-empty" data-i18n="historyEmpty">Aucun lancer pour l'instant.</p>
     </div>
   </section>
 
@@ -661,6 +793,7 @@
         <h1 class="brand"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg>Mölkky</h1><span class="app-version"></span>
         <span id="mode-tag-win"></span>
       </div>
+      <button type="button" class="gear-btn" data-i18n-aria="settings" aria-label="Réglages"><svg aria-hidden="true"><use href="#gear"/></svg></button>
     </header>
     <div class="victory">
       <div class="trophy" aria-hidden="true">
@@ -673,18 +806,18 @@
           <path d="M9.5 18h5"/>
         </svg>
       </div>
-      <div class="winner"><span id="winner-name"></span> gagne !</div>
+      <div class="winner" id="winner-title"></div>
       <div class="win-reason" id="win-reason"></div>
     </div>
     <div class="card">
-      <h2>Classement</h2>
+      <h2 data-i18n="ranking">Classement</h2>
       <ol class="ranking" id="ranking"></ol>
     </div>
     <div class="win-actions">
-      <button class="primary big" id="rematch-btn">Revanche</button>
+      <button class="primary big" id="rematch-btn" data-i18n="rematch">Revanche</button>
       <div class="two">
-        <button id="win-undo-btn">Annuler le dernier lancer</button>
-        <button id="change-btn">Changer joueurs / mode</button>
+        <button id="win-undo-btn" data-i18n="winUndo">Annuler le dernier lancer</button>
+        <button id="change-btn" data-i18n="change">Changer joueurs / mode</button>
       </div>
     </div>
   </section>
@@ -695,8 +828,8 @@
   <div class="modal">
     <p id="modal-text"></p>
     <div class="row">
-      <button id="modal-cancel">Annuler</button>
-      <button class="primary" id="modal-ok">Confirmer</button>
+      <button id="modal-cancel" data-i18n="cancel">Annuler</button>
+      <button class="primary" id="modal-ok" data-i18n="confirm">Confirmer</button>
     </div>
   </div>
 </div>
@@ -705,7 +838,7 @@
 <div class="faceoff hidden" id="faceoff" role="status" aria-live="polite">
   <div class="fo-side fo-left" id="fo-left"></div>
   <div class="fo-side fo-right" id="fo-right"></div>
-  <div class="fo-center"><strong>Barrage</strong><span id="fo-target"></span></div>
+  <div class="fo-center"><strong data-i18n="playoff">Barrage</strong><span id="fo-target"></span></div>
 </div>
 
 <!-- Confettis de victoire -->
@@ -736,6 +869,73 @@
   </div>
 </div>
 
+<!-- Panneau Réglages : descend du haut (Notes, Langue) -->
+<dialog id="settings" class="sheet" aria-labelledby="settings-title">
+  <div class="sheet-in" tabindex="-1" autofocus>
+    <div class="sheet-head">
+      <button type="button" id="settings-back" class="round" data-i18n-aria="back" aria-label="Retour" hidden>
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <h2 id="settings-title" data-i18n="settings">Réglages</h2>
+      <button type="button" id="settings-close" class="round" data-i18n-aria="close" aria-label="Fermer">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div id="view-menu">
+      <button type="button" class="set-row" id="row-notes">
+        <span class="set-ico"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z M9 8h6 M9 12h6 M9 16h3"/></svg></span>
+        <span class="set-txt" data-i18n="notes">Notes</span>
+        <span class="badge" id="notes-badge">0</span>
+        <svg class="set-chev" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+      </button>
+      <button type="button" class="set-row" id="row-lang">
+        <span class="set-ico"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></span>
+        <span class="set-txt" data-i18n="lang">Langue</span>
+        <span class="set-val" id="lang-current"></span>
+        <svg class="set-chev" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+    <div id="view-lang" role="radiogroup" data-i18n-aria="lang" aria-label="Langue" hidden>
+      <button type="button" class="set-row" role="radio" data-lang="fr" lang="fr"><span class="set-txt">Français</span><span class="set-check" aria-hidden="true"></span></button>
+      <button type="button" class="set-row" role="radio" data-lang="en" lang="en"><span class="set-txt">English</span><span class="set-check" aria-hidden="true"></span></button>
+      <button type="button" class="set-row" role="radio" data-lang="es" lang="es"><span class="set-txt">Español</span><span class="set-check" aria-hidden="true"></span></button>
+    </div>
+  </div>
+</dialog>
+
+<!-- Page Notes : liste à cocher façon Rappels -->
+<dialog id="notes-page" class="notes-page" aria-labelledby="notes-title">
+  <div class="notes-in" tabindex="-1" autofocus>
+    <div class="notes-bar">
+      <button type="button" id="notes-back" class="round" data-i18n-aria="back" aria-label="Retour">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <button type="button" id="notes-menu-btn" class="round" data-i18n-aria="more" aria-label="Plus d'options" aria-haspopup="true" aria-expanded="false" aria-controls="notes-menu">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="18.5" cy="12" r="1.8"/></svg>
+      </button>
+      <div id="notes-menu" class="notes-menu" hidden>
+        <button type="button" id="notes-copy" data-i18n="notesCopy">Copier les notes à faire</button>
+        <button type="button" id="notes-clear" class="danger" data-i18n="notesClear">Supprimer les notes terminées</button>
+      </div>
+    </div>
+    <h2 id="notes-title" class="notes-title" data-i18n="notes">Notes</h2>
+    <p id="notes-msg" class="notes-msg" role="status" hidden></p>
+    <ul id="notes-list" class="notes-list"></ul>
+    <div class="note note-add">
+      <span class="note-circle add" aria-hidden="true"></span>
+      <textarea id="notes-new" class="note-text" rows="1" maxlength="1000" enterkeyhint="next" autocomplete="off" autocapitalize="sentences" data-i18n-ph="newNote" data-i18n-aria="newNote" placeholder="Nouvelle note" aria-label="Nouvelle note"></textarea>
+    </div>
+    <p id="notes-empty" class="notes-empty muted" data-i18n="notesEmpty" hidden></p>
+    <section id="notes-done-block" class="notes-done" hidden>
+      <button type="button" id="notes-toggle" class="notes-toggle" aria-expanded="false" aria-controls="notes-done-list">
+        <span id="notes-toggle-text"></span>
+        <svg class="notes-chev" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+      </button>
+      <ul id="notes-done-list" class="notes-list done" hidden></ul>
+    </section>
+  </div>
+</dialog>
+
 <!-- Private joke : exactement 2 quilles -->
 <div class="pascal-back hidden" id="pascal" role="status" aria-live="polite">
   <div class="pascal-card">
@@ -748,19 +948,328 @@
 (function () {
   'use strict';
 
-  var APP_VERSION = '1.9'; // à augmenter à chaque mise à jour (1.1, 1.2...)
+  var APP_VERSION = '2.0'; // à augmenter à chaque mise à jour (1.1, 1.2...)
   var STORAGE_KEY = 'molkky-compteur-v1';
+  var NOTES_KEY = 'molkky-notes';
   var MAIN = { target: 50, back: 25 };     // partie principale
   var PLAYOFF = { target: 12, back: 6 };   // barrage
   var PIN_ROWS = [[7, 9, 8], [5, 11, 12, 6], [3, 10, 4], [1, 2]];
-  var MODE_LABELS = { classic: 'Classique', batard: 'Bâtard' };
+  var LANGS = { fr: 'Français', en: 'English', es: 'Español' };
+
+  // ---------- Traductions ----------
+  // Une valeur est un texte, une liste ou une fonction qui reçoit les paramètres.
+  var I18N = {
+    fr: {
+      title: 'Mölkky – Compteur de points',
+      modeAria: 'Mode de jeu',
+      'mode.classic': 'Classique', 'mode.classicSub': 'Règles officielles',
+      'mode.batard': 'Bâtard', 'mode.batardSub': 'Égaliser fait tomber l\'autre',
+      players: 'Joueurs', playerPh: 'Nom du joueur ou de l\'équipe', add: 'Ajouter',
+      playersEmpty: 'Ajoutez au moins 2 joueurs. L\'ordre de la liste est l\'ordre de jeu.',
+      moveUp: function (n) { return 'Monter ' + n; },
+      remove: function (n) { return 'Retirer ' + n; },
+      missTitle: '3 lancers manqués d\'affilée', missElim: 'Éliminé', missZero: 'Retour à 0',
+      rulesTitle: 'Rappel des règles',
+      rule1: '1 seule quille tombée : on marque son numéro.',
+      rule2: 'Plusieurs quilles tombées : on marque le nombre de quilles.',
+      rule3: 'Il faut atteindre <strong>exactement 50</strong>. Au-delà, on retombe à 25.',
+      ruleMiss: function (elim) {
+        return '3 lancers manqués d\'affilée : ' + (elim ? 'le joueur est éliminé.' : 'le score retombe à 0.') +
+          ' Un lancer qui marque remet le compteur à 0.';
+      },
+      ruleBatard: '<strong>Mode Bâtard :</strong> si votre nouveau score égale celui d\'un autre joueur en jeu, il retombe à 0 (s\'il avait de 0 à 24) ou à 25 (de 25 à 49). En barrage : 0 (de 0 à 5) ou 6 (de 6 à 11). Ne s\'applique pas sur un lancer manqué.',
+      rule4: 'Quand un joueur atteint 50, on finit le tour : les joueurs suivants peuvent encore égaler. Seul à 50 : il gagne.',
+      rule5: 'Plusieurs joueurs à 50 : barrage entre eux, premier à <strong>exactement 12</strong> (au-delà, retour à 6), avec la même règle de fin de tour.',
+      rule6: 'Le dernier joueur encore en jeu gagne.',
+      start: 'Commencer la partie', newGame: 'Nouvelle partie',
+      turnOf: 'Au tour de', history: 'Historique', historyEmpty: 'Aucun lancer pour l\'instant.',
+      undo: 'Annuler', ranking: 'Classement', rematch: 'Revanche',
+      winUndo: 'Annuler le dernier lancer', change: 'Changer joueurs / mode',
+      cancel: 'Annuler', confirm: 'Confirmer',
+      playoff: 'Barrage',
+      playoffN: function (lv) { return 'Barrage' + (lv > 1 ? ' n°' + lv : ''); },
+      bannerPlayoff: function (lv, tg, bk) { return I18N.fr.playoffN(lv) + ' : premier à ' + tg + ' points (au-delà, retour à ' + bk + ').'; },
+      bannerReach: function (names, n, tg) { return '<strong>' + names + '</strong>' + (n > 1 ? ' ont' : ' a') + ' atteint ' + tg + ' ! On finit le tour : les joueurs restants peuvent encore égaler.'; },
+      tagElim: 'éliminé', tagElimPlayoff: 'éliminé au barrage',
+      tagReach: function (tg) { return tg + ' atteint'; },
+      dotsTitle: function (m) { return 'Lancers manqués d\'affilée : ' + m + '/3'; },
+      dotsAria: function (m) { return m + ' manqué(s) sur 3'; },
+      turn: function (n) { return 'Tour ' + n; },
+      pin: function (n) { return 'Quille ' + n; },
+      hMiss: 'Manqué',
+      hOne: function (n) { return 'Quille n°' + n; },
+      hMany: function (c, list) { return c + ' quilles (' + list + ')'; },
+      hTotal: function (n) { return 'total ' + n; },
+      pMiss: function (m) { return 'Aucune quille : lancer manqué (' + m + '/3)'; },
+      pThirdElim: function (nm) { return '3e lancer manqué : ' + nm + ' sera éliminé'; },
+      pWillWin: function (nm) { return nm + ' gagnera la partie'; },
+      pThirdZero: '3e lancer manqué : retour à 0',
+      bMiss: 'Manqué (0)',
+      bValidate: function (p) { return 'Valider : +' + p; },
+      pOne: function (n, p) { return '1 quille (n°' + n + ') : ' + p + ' pts'; },
+      pMany: function (c, p) { return c + ' quilles : ' + p + ' pts'; },
+      pTotal: function (n) { return ' · total ' + n; },
+      pOver: function (tg, bk) { return 'Dépasse ' + tg + ' : retour à ' + bk; },
+      pReach: function (tg) { return 'Atteint ' + tg + ' ! On finit le tour'; },
+      pTie: function (tg) { return 'Égalité à ' + tg + ' → barrage'; },
+      pVictory: 'Victoire !',
+      pEndWin: function (nm) { return 'Fin du tour : ' + nm + ' gagne'; },
+      pEndPlayoff: function (names) { return 'Fin du tour : barrage entre ' + names; },
+      batard: function (nm, to) { return 'Bâtard ! ' + nm + ' retombe à ' + to; },
+      nOver: function (tg, bk) { return 'dépasse ' + tg + ' → retour à ' + bk; },
+      nReached: function (tg) { return tg + ' atteint !'; },
+      nThirdElim: '3e manqué : éliminé',
+      nThirdZero: '3e manqué : retour à 0',
+      nMiss: function (m) { return 'manqué ' + m + '/3'; },
+      nWins: function (nm) { return nm + ' gagne !'; },
+      nLast: function (nm) { return nm + ' est le dernier en jeu : victoire !'; },
+      nVictory: 'victoire !',
+      nEndWin: function (nm) { return 'fin du tour : ' + nm + ' gagne !'; },
+      sepPlayoff: function (tg, names, ptg) { return 'Égalité à ' + tg + ' entre ' + names + ' : barrage, premier à ' + ptg + ' !'; },
+      fell: function (nm, s) { return nm + ' retombe à ' + s; },
+      overLine: function (nm, raw, bk) { return nm + ' : ' + raw + ' → retour à ' + bk; },
+      missOut: function (nm) { return nm + ' est hors jeu'; },
+      foTarget: function (tg) { return 'premier à ' + tg; },
+      abandon: 'Abandonner la partie en cours et revenir aux réglages ? Les scores seront perdus.',
+      winTitle: function (nm) { return nm + ' gagne !'; },
+      'win.target': function (tg) { return 'Pile ' + tg + ' points'; },
+      'win.playoff': function (tg) { return 'Vainqueur du barrage, pile ' + tg; },
+      'win.last': 'Dernier joueur encore en jeu',
+      rankPlayoff: function (s) { return 'barrage ' + s; },
+      linesPascal: ['Oh la belle Pascal !!', 'Pascal serait fier de toi !!', 'Une classique Pascal !!'],
+      linesBatard: ['Oh non !', 'Pas de chance !', 'Sans pitié !', 'Quelle trahison !', 'Fallait pas être là !', 'Retour à l\'envoyeur !', 'Ça, c\'est bas !'],
+      linesOver: ['Tu es allé trop loin !', 'Un peu trop gourmand !', 'Ça déborde !', 'Trop fort, trop loin !', 'Retour à la case départ… ou presque !', 'Fallait viser moins haut !'],
+      linesMiss: ['Jamais deux sans trois…', 'Trois fois rien !', 'Les quilles te boudent !', 'Triple zéro !', 'Même le vent a fait mieux', 'C\'est pas ton jour !'],
+      settings: 'Réglages', back: 'Retour', close: 'Fermer', lang: 'Langue',
+      notes: 'Notes', notesBadge: function (n) { return n + ' note(s) à faire'; },
+      more: 'Plus d\'options', notesCopy: 'Copier les notes à faire', notesClear: 'Supprimer les notes terminées',
+      newNote: 'Nouvelle note',
+      notesEmpty: 'Aucune note pour l\'instant. Touchez « Nouvelle note » pour noter une idée.',
+      notesDone: function (n) { return 'Terminées (' + n + ')'; },
+      notesCopied: function (n) { return n + ' note(s) copiée(s)'; },
+      notesNoCopy: 'Aucune note à faire à copier',
+      notesCopyFail: 'Copie impossible sur cet appareil',
+      notesClearAsk: function (n) { return 'Supprimer ' + n + ' note(s) terminée(s) ?'; },
+      notesCleared: function (n) { return n + ' note(s) supprimée(s)'; },
+      markDone: 'Marquer comme terminée', markTodo: 'Remettre à faire'
+    },
+    en: {
+      title: 'Mölkky – Score counter',
+      modeAria: 'Game mode',
+      'mode.classic': 'Classic', 'mode.classicSub': 'Official rules',
+      'mode.batard': 'Bastard', 'mode.batardSub': 'Matching a score knocks the other down',
+      players: 'Players', playerPh: 'Player or team name', add: 'Add',
+      playersEmpty: 'Add at least 2 players. The list order is the playing order.',
+      moveUp: function (n) { return 'Move up ' + n; },
+      remove: function (n) { return 'Remove ' + n; },
+      missTitle: '3 misses in a row', missElim: 'Eliminated', missZero: 'Back to 0',
+      rulesTitle: 'Rules',
+      rule1: 'One pin down: score its number.',
+      rule2: 'Several pins down: score the number of pins.',
+      rule3: 'You must reach <strong>exactly 50</strong>. Going over drops you back to 25.',
+      ruleMiss: function (elim) {
+        return '3 misses in a row: ' + (elim ? 'the player is eliminated.' : 'the score drops to 0.') +
+          ' A scoring throw resets the count.';
+      },
+      ruleBatard: '<strong>Bastard mode:</strong> if your new score equals that of another player still in play, they drop to 0 (if they had 0 to 24) or to 25 (25 to 49). In a play-off: 0 (0 to 5) or 6 (6 to 11). Does not apply on a miss.',
+      rule4: 'When a player reaches 50, the round is finished: the following players can still tie. Alone on 50: they win.',
+      rule5: 'Several players on 50: play-off between them, first to <strong>exactly 12</strong> (going over drops to 6), with the same end-of-round rule.',
+      rule6: 'The last player still in play wins.',
+      start: 'Start the game', newGame: 'New game',
+      turnOf: 'Now playing:', history: 'History', historyEmpty: 'No throws yet.',
+      undo: 'Undo', ranking: 'Ranking', rematch: 'Rematch',
+      winUndo: 'Undo last throw', change: 'Change players / mode',
+      cancel: 'Cancel', confirm: 'Confirm',
+      playoff: 'Play-off',
+      playoffN: function (lv) { return 'Play-off' + (lv > 1 ? ' #' + lv : ''); },
+      bannerPlayoff: function (lv, tg, bk) { return I18N.en.playoffN(lv) + ': first to ' + tg + ' points (going over drops to ' + bk + ').'; },
+      bannerReach: function (names, n, tg) { return '<strong>' + names + '</strong> reached ' + tg + '! Finishing the round: the remaining players can still tie.'; },
+      tagElim: 'out', tagElimPlayoff: 'out in play-off',
+      tagReach: function (tg) { return tg + ' reached'; },
+      dotsTitle: function (m) { return 'Misses in a row: ' + m + '/3'; },
+      dotsAria: function (m) { return m + ' of 3 missed'; },
+      turn: function (n) { return 'Round ' + n; },
+      pin: function (n) { return 'Pin ' + n; },
+      hMiss: 'Miss',
+      hOne: function (n) { return 'Pin ' + n; },
+      hMany: function (c, list) { return c + ' pins (' + list + ')'; },
+      hTotal: function (n) { return 'total ' + n; },
+      pMiss: function (m) { return 'No pins: missed throw (' + m + '/3)'; },
+      pThirdElim: function (nm) { return '3rd miss: ' + nm + ' will be eliminated'; },
+      pWillWin: function (nm) { return nm + ' will win the game'; },
+      pThirdZero: '3rd miss: back to 0',
+      bMiss: 'Miss (0)',
+      bValidate: function (p) { return 'Confirm: +' + p; },
+      pOne: function (n, p) { return '1 pin (#' + n + '): ' + p + ' pts'; },
+      pMany: function (c, p) { return c + ' pins: ' + p + ' pts'; },
+      pTotal: function (n) { return ' · total ' + n; },
+      pOver: function (tg, bk) { return 'Over ' + tg + ': back to ' + bk; },
+      pReach: function (tg) { return 'Reaches ' + tg + '! Finishing the round'; },
+      pTie: function (tg) { return 'Tie on ' + tg + ' → play-off'; },
+      pVictory: 'Victory!',
+      pEndWin: function (nm) { return 'End of round: ' + nm + ' wins'; },
+      pEndPlayoff: function (names) { return 'End of round: play-off between ' + names; },
+      batard: function (nm, to) { return 'Bastard! ' + nm + ' drops to ' + to; },
+      nOver: function (tg, bk) { return 'over ' + tg + ' → back to ' + bk; },
+      nReached: function (tg) { return tg + ' reached!'; },
+      nThirdElim: '3rd miss: eliminated',
+      nThirdZero: '3rd miss: back to 0',
+      nMiss: function (m) { return 'miss ' + m + '/3'; },
+      nWins: function (nm) { return nm + ' wins!'; },
+      nLast: function (nm) { return nm + ' is the last one standing: victory!'; },
+      nVictory: 'victory!',
+      nEndWin: function (nm) { return 'end of round: ' + nm + ' wins!'; },
+      sepPlayoff: function (tg, names, ptg) { return 'Tie on ' + tg + ' between ' + names + ': play-off, first to ' + ptg + '!'; },
+      fell: function (nm, s) { return nm + ' drops to ' + s; },
+      overLine: function (nm, raw, bk) { return nm + ': ' + raw + ' → back to ' + bk; },
+      missOut: function (nm) { return nm + ' is out'; },
+      foTarget: function (tg) { return 'first to ' + tg; },
+      abandon: 'Abandon the current game and go back to setup? Scores will be lost.',
+      winTitle: function (nm) { return nm + ' wins!'; },
+      'win.target': function (tg) { return 'Exactly ' + tg + ' points'; },
+      'win.playoff': function (tg) { return 'Play-off winner, exactly ' + tg; },
+      'win.last': 'Last player still in play',
+      rankPlayoff: function (s) { return 'play-off ' + s; },
+      linesPascal: ['What a beautiful Pascal!!', 'Pascal would be proud of you!!', 'A classic Pascal!!'],
+      linesBatard: ['Oh no!', 'Tough luck!', 'Merciless!', 'What a betrayal!', 'Wrong place, wrong time!', 'Return to sender!', 'That\'s low!'],
+      linesOver: ['You went too far!', 'A bit too greedy!', 'It\'s overflowing!', 'Too strong, too far!', 'Back to square one… almost!', 'Should have aimed lower!'],
+      linesMiss: ['Third time unlucky…', 'Three times nothing!', 'The pins are ignoring you!', 'Triple zero!', 'Even the wind did better', 'Not your day!'],
+      settings: 'Settings', back: 'Back', close: 'Close', lang: 'Language',
+      notes: 'Notes', notesBadge: function (n) { return n + ' note(s) to do'; },
+      more: 'More options', notesCopy: 'Copy notes to do', notesClear: 'Delete completed notes',
+      newNote: 'New note',
+      notesEmpty: 'No notes yet. Tap “New note” to jot down an idea.',
+      notesDone: function (n) { return 'Completed (' + n + ')'; },
+      notesCopied: function (n) { return n + ' note(s) copied'; },
+      notesNoCopy: 'No notes to do to copy',
+      notesCopyFail: 'Copying is not possible on this device',
+      notesClearAsk: function (n) { return 'Delete ' + n + ' completed note(s)?'; },
+      notesCleared: function (n) { return n + ' note(s) deleted'; },
+      markDone: 'Mark as done', markTodo: 'Mark as not done'
+    },
+    es: {
+      title: 'Mölkky – Contador de puntos',
+      modeAria: 'Modo de juego',
+      'mode.classic': 'Clásico', 'mode.classicSub': 'Reglas oficiales',
+      'mode.batard': 'Bastardo', 'mode.batardSub': 'Igualar hace caer al otro',
+      players: 'Jugadores', playerPh: 'Nombre del jugador o equipo', add: 'Añadir',
+      playersEmpty: 'Añade al menos 2 jugadores. El orden de la lista es el orden de juego.',
+      moveUp: function (n) { return 'Subir a ' + n; },
+      remove: function (n) { return 'Quitar a ' + n; },
+      missTitle: '3 fallos seguidos', missElim: 'Eliminado', missZero: 'Vuelta a 0',
+      rulesTitle: 'Reglas',
+      rule1: 'Un solo bolo derribado: se suma su número.',
+      rule2: 'Varios bolos derribados: se suma el número de bolos.',
+      rule3: 'Hay que llegar a <strong>exactamente 50</strong>. Si te pasas, vuelves a 25.',
+      ruleMiss: function (elim) {
+        return '3 fallos seguidos: ' + (elim ? 'el jugador queda eliminado.' : 'la puntuación vuelve a 0.') +
+          ' Un lanzamiento que puntúa reinicia la cuenta.';
+      },
+      ruleBatard: '<strong>Modo Bastardo:</strong> si tu nueva puntuación iguala la de otro jugador en juego, este cae a 0 (si tenía de 0 a 24) o a 25 (de 25 a 49). En el desempate: 0 (de 0 a 5) o 6 (de 6 a 11). No se aplica en un lanzamiento fallado.',
+      rule4: 'Cuando un jugador llega a 50, se termina la ronda: los jugadores siguientes aún pueden empatar. Si está solo en 50, gana.',
+      rule5: 'Varios jugadores en 50: desempate entre ellos, el primero en llegar a <strong>exactamente 12</strong> (si se pasa, vuelve a 6), con la misma regla de final de ronda.',
+      rule6: 'El último jugador que queda en juego gana.',
+      start: 'Empezar la partida', newGame: 'Nueva partida',
+      turnOf: 'Turno de', history: 'Historial', historyEmpty: 'Aún no hay lanzamientos.',
+      undo: 'Deshacer', ranking: 'Clasificación', rematch: 'Revancha',
+      winUndo: 'Deshacer último lanzamiento', change: 'Cambiar jugadores / modo',
+      cancel: 'Cancelar', confirm: 'Confirmar',
+      playoff: 'Desempate',
+      playoffN: function (lv) { return 'Desempate' + (lv > 1 ? ' n.º ' + lv : ''); },
+      bannerPlayoff: function (lv, tg, bk) { return I18N.es.playoffN(lv) + ': el primero en llegar a ' + tg + ' puntos (si se pasa, vuelve a ' + bk + ').'; },
+      bannerReach: function (names, n, tg) { return '¡<strong>' + names + '</strong>' + (n > 1 ? ' han' : ' ha') + ' llegado a ' + tg + '! Se termina la ronda: los jugadores restantes aún pueden empatar.'; },
+      tagElim: 'eliminado', tagElimPlayoff: 'eliminado en el desempate',
+      tagReach: function (tg) { return tg + ' alcanzado'; },
+      dotsTitle: function (m) { return 'Fallos seguidos: ' + m + '/3'; },
+      dotsAria: function (m) { return m + ' fallo(s) de 3'; },
+      turn: function (n) { return 'Ronda ' + n; },
+      pin: function (n) { return 'Bolo ' + n; },
+      hMiss: 'Fallo',
+      hOne: function (n) { return 'Bolo n.º ' + n; },
+      hMany: function (c, list) { return c + ' bolos (' + list + ')'; },
+      hTotal: function (n) { return 'total ' + n; },
+      pMiss: function (m) { return 'Ningún bolo: lanzamiento fallado (' + m + '/3)'; },
+      pThirdElim: function (nm) { return '3.er fallo: ' + nm + ' quedará eliminado'; },
+      pWillWin: function (nm) { return nm + ' ganará la partida'; },
+      pThirdZero: '3.er fallo: vuelta a 0',
+      bMiss: 'Fallo (0)',
+      bValidate: function (p) { return 'Validar: +' + p; },
+      pOne: function (n, p) { return '1 bolo (n.º ' + n + '): ' + p + ' pts'; },
+      pMany: function (c, p) { return c + ' bolos: ' + p + ' pts'; },
+      pTotal: function (n) { return ' · total ' + n; },
+      pOver: function (tg, bk) { return 'Pasa de ' + tg + ': vuelta a ' + bk; },
+      pReach: function (tg) { return '¡Llega a ' + tg + '! Se termina la ronda'; },
+      pTie: function (tg) { return 'Empate a ' + tg + ' → desempate'; },
+      pVictory: '¡Victoria!',
+      pEndWin: function (nm) { return 'Fin de ronda: gana ' + nm; },
+      pEndPlayoff: function (names) { return 'Fin de ronda: desempate entre ' + names; },
+      batard: function (nm, to) { return '¡Bastardo! ' + nm + ' cae a ' + to; },
+      nOver: function (tg, bk) { return 'pasa de ' + tg + ' → vuelta a ' + bk; },
+      nReached: function (tg) { return '¡' + tg + ' alcanzado!'; },
+      nThirdElim: '3.er fallo: eliminado',
+      nThirdZero: '3.er fallo: vuelta a 0',
+      nMiss: function (m) { return 'fallo ' + m + '/3'; },
+      nWins: function (nm) { return '¡Gana ' + nm + '!'; },
+      nLast: function (nm) { return nm + ' es el último en juego: ¡victoria!'; },
+      nVictory: '¡victoria!',
+      nEndWin: function (nm) { return 'fin de ronda: ¡gana ' + nm + '!'; },
+      sepPlayoff: function (tg, names, ptg) { return 'Empate a ' + tg + ' entre ' + names + ': ¡desempate, el primero en llegar a ' + ptg + '!'; },
+      fell: function (nm, s) { return nm + ' cae a ' + s; },
+      overLine: function (nm, raw, bk) { return nm + ': ' + raw + ' → vuelta a ' + bk; },
+      missOut: function (nm) { return nm + ' queda fuera'; },
+      foTarget: function (tg) { return 'primero a ' + tg; },
+      abandon: '¿Abandonar la partida en curso y volver a la configuración? Se perderán las puntuaciones.',
+      winTitle: function (nm) { return '¡Gana ' + nm + '!'; },
+      'win.target': function (tg) { return 'Exactamente ' + tg + ' puntos'; },
+      'win.playoff': function (tg) { return 'Ganador del desempate, exactamente ' + tg; },
+      'win.last': 'Último jugador que queda en juego',
+      rankPlayoff: function (s) { return 'desempate ' + s; },
+      linesPascal: ['¡¡Qué bonita Pascal!!', '¡¡Pascal estaría orgulloso de ti!!', '¡¡Una Pascal clásica!!'],
+      linesBatard: ['¡Oh, no!', '¡Qué mala suerte!', '¡Sin piedad!', '¡Qué traición!', '¡No haber estado ahí!', '¡Devuelto al remitente!', '¡Eso es muy bajo!'],
+      linesOver: ['¡Te has pasado!', '¡Un poco demasiado glotón!', '¡Se desborda!', '¡Demasiado fuerte, demasiado lejos!', '¡Vuelta a empezar… o casi!', '¡Había que apuntar más bajo!'],
+      linesMiss: ['No hay dos sin tres…', '¡Tres veces nada!', '¡Los bolos te ignoran!', '¡Triple cero!', 'Hasta el viento lo hizo mejor', '¡No es tu día!'],
+      settings: 'Ajustes', back: 'Volver', close: 'Cerrar', lang: 'Idioma',
+      notes: 'Notas', notesBadge: function (n) { return n + ' nota(s) pendiente(s)'; },
+      more: 'Más opciones', notesCopy: 'Copiar notas pendientes', notesClear: 'Eliminar notas completadas',
+      newNote: 'Nueva nota',
+      notesEmpty: 'Aún no hay notas. Toca «Nueva nota» para apuntar una idea.',
+      notesDone: function (n) { return 'Completadas (' + n + ')'; },
+      notesCopied: function (n) { return n + ' nota(s) copiada(s)'; },
+      notesNoCopy: 'No hay notas pendientes que copiar',
+      notesCopyFail: 'No se puede copiar en este dispositivo',
+      notesClearAsk: function (n) { return '¿Eliminar ' + n + ' nota(s) completada(s)?'; },
+      notesCleared: function (n) { return n + ' nota(s) eliminada(s)'; },
+      markDone: 'Marcar como hecha', markTodo: 'Marcar como pendiente'
+    }
+  };
+  var lang = 'fr';
+  function t(key) {
+    var v = (I18N[lang] || I18N.fr)[key];
+    if (v === undefined) v = I18N.fr[key];
+    if (typeof v === 'function') return v.apply(null, Array.prototype.slice.call(arguments, 1));
+    return v === undefined ? key : v;
+  }
+  function pick(list) { return list[Math.floor(Math.random() * list.length)]; }
+  // Textes fixes de la page (attributs data-i18n…)
+  function applyI18n() {
+    document.documentElement.lang = lang;
+    document.title = t('title');
+    document.querySelectorAll('[data-i18n]').forEach(function (el) { el.textContent = t(el.dataset.i18n); });
+    document.querySelectorAll('[data-i18n-html]').forEach(function (el) { el.innerHTML = t(el.dataset.i18nHtml); });
+    document.querySelectorAll('[data-i18n-ph]').forEach(function (el) { el.placeholder = t(el.dataset.i18nPh); });
+    document.querySelectorAll('[data-i18n-aria]').forEach(function (el) { el.setAttribute('aria-label', t(el.dataset.i18nAria)); });
+  }
+  // Note d'historique : objet { k: clé, a: paramètres } (ancien format : texte)
+  function noteText(n) {
+    return typeof n === 'string' ? n : t.apply(null, [n.k].concat(n.a || []));
+  }
   var ICONS = {
     up: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>',
     del: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
     arrow: '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M8 5l10 7-10 7z"/></svg>'
   };
   function setModeTag(el, mode) {
-    el.textContent = MODE_LABELS[mode];
+    el.textContent = t('mode.' + mode);
     el.className = 'mode-tag ' + mode;
   }
 
@@ -769,7 +1278,8 @@
     names: [],          // joueurs saisis à l'écran de réglages
     gameMode: 'classic',// 'classic' ou 'batard'
     missMode: 'elim',   // 'elim' ou 'zero'
-    game: null,         // partie en cours
+    lang: null,         // 'fr', 'en' ou 'es'
+    game: null,       // partie en cours
     undo: []            // pile d'états précédents (JSON)
   };
   var selected = [];    // quilles sélectionnées (non sauvegardé)
@@ -819,6 +1329,8 @@
       if (!raw) return;
       var s = JSON.parse(raw);
       if (s && Array.isArray(s.names)) {
+        // Données d'avant la v2.0 (sans langue) : l'app était en français
+        state.lang = LANGS[s.lang] ? s.lang : 'fr';
         state.names = s.names;
         state.missMode = s.missMode === 'zero' ? 'zero' : 'elim';
         state.gameMode = s.gameMode === 'batard' ? 'batard' : 'classic';
@@ -840,7 +1352,6 @@
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
-  function plural(n, word) { return n + ' ' + word + (n > 1 ? 's' : ''); }
   function pointsFor(pins) {
     if (pins.length === 0) return 0;
     if (pins.length === 1) return pins[0];
@@ -889,9 +1400,6 @@
     }
     return { total: total, over: over, victims: victims };
   }
-  function batardText(g, v) {
-    return 'Bâtard ! ' + g.players[v.i].name + ' retombe à ' + v.to;
-  }
 
   // ---------- Écran actif ----------
   function currentScreen() {
@@ -916,8 +1424,8 @@
       return '<li>' +
         '<span class="num">' + (i + 1) + '</span>' +
         '<span class="pname">' + esc(n) + '</span>' +
-        '<button type="button" class="icon" data-up="' + i + '" aria-label="Monter ' + esc(n) + '"' + (i === 0 ? ' disabled' : '') + '>' + ICONS.up + '</button>' +
-        '<button type="button" class="icon" data-del="' + i + '" aria-label="Retirer ' + esc(n) + '">' + ICONS.del + '</button>' +
+        '<button type="button" class="icon" data-up="' + i + '" aria-label="' + esc(t('moveUp', n)) + '"' + (i === 0 ? ' disabled' : '') + '>' + ICONS.up + '</button>' +
+        '<button type="button" class="icon" data-del="' + i + '" aria-label="' + esc(t('remove', n)) + '">' + ICONS.del + '</button>' +
         '</li>';
     }).join('');
     $('player-empty').classList.toggle('hidden', state.names.length >= 2);
@@ -930,9 +1438,7 @@
       r.checked = r.value === state.gameMode;
     });
     $('rule-batard').classList.toggle('hidden', state.gameMode !== 'batard');
-    $('rule-miss').textContent = '3 lancers manqués d\'affilée : ' +
-      (state.missMode === 'elim' ? 'le joueur est éliminé.' : 'le score retombe à 0.') +
-      ' Un lancer qui marque remet le compteur à 0.';
+    $('rule-miss').textContent = t('ruleMiss', state.missMode === 'elim');
   }
 
   $('add-form').addEventListener('submit', function (e) {
@@ -1063,14 +1569,11 @@
     // Bandeaux
     var banners = '';
     if (g.level > 0) {
-      banners += '<div class="banner playoff">Barrage' + (g.level > 1 ? ' n°' + g.level : '') +
-        ' : premier à ' + PLAYOFF.target + ' points (au-delà, retour à ' + PLAYOFF.back + ').</div>';
+      banners += '<div class="banner playoff">' + esc(t('bannerPlayoff', g.level, PLAYOFF.target, PLAYOFF.back)) + '</div>';
     }
     var reached = reachedList(g);
     if (reached.length) {
-      banners += '<div class="banner reach"><strong>' + esc(nameList(g, reached)) + '</strong>' +
-        (reached.length > 1 ? ' ont' : ' a') + ' atteint ' + g.target +
-        ' ! On finit le tour : les joueurs restants peuvent encore égaler.</div>';
+      banners += '<div class="banner reach">' + t('bannerReach', esc(nameList(g, reached)), reached.length, g.target) + '</div>';
     }
     $('banners').innerHTML = banners;
 
@@ -1081,13 +1584,13 @@
       var cls = 'pcard' + (isCur ? ' current' : '') + (p.eliminated ? ' out' : '');
       var dots = '';
       for (var k = 0; k < 3; k++) dots += '<i class="' + (k < p.misses ? 'on' : '') + '"></i>';
-      var tag = p.eliminated ? '<span class="tag elim">éliminé</span>'
-        : p.done ? '<span class="tag reach">' + g.target + ' atteint</span>' : '';
+      var tag = p.eliminated ? '<span class="tag elim">' + esc(t('tagElim')) + '</span>'
+        : p.done ? '<span class="tag reach">' + esc(t('tagReach', g.target)) + '</span>' : '';
       return '<div class="' + cls + '" data-i="' + i + '">' +
         '<div class="pline">' +
-          (isCur ? '<span class="arrow">' + ICONS.arrow + '<span class="sr">Au tour de </span></span>' : '') +
+          (isCur ? '<span class="arrow">' + ICONS.arrow + '<span class="sr">' + esc(t('turnOf')) + ' </span></span>' : '') +
           '<span class="nm">' + esc(p.name) + '</span>' +
-          '<span class="dots" title="Lancers manqués d\'affilée : ' + p.misses + '/3" aria-label="' + p.misses + ' manqué(s) sur 3">' + dots + '</span>' +
+          '<span class="dots" title="' + esc(t('dotsTitle', p.misses)) + '" aria-label="' + esc(t('dotsAria', p.misses)) + '">' + dots + '</span>' +
           tag +
           '<span class="sc">' + p.score + '</span>' +
         '</div>' +
@@ -1096,14 +1599,14 @@
     }).join('');
 
     $('current-name').textContent = g.players[g.current].name;
-    $('turn-label').textContent = (g.level > 0 ? 'Barrage' + (g.level > 1 ? ' n°' + g.level : '') + ' · ' : '') + 'Tour ' + g.turn;
+    $('turn-label').textContent = (g.level > 0 ? t('playoffN', g.level) + ' · ' : '') + t('turn', g.turn);
 
     // Quilles
     var k = 0;
     $('pins').innerHTML = PIN_ROWS.map(function (row) {
       return '<div class="prow">' + row.map(function (n) {
         var on = selected.indexOf(n) !== -1;
-        return '<button type="button" class="pin' + (on ? ' sel' : '') + '" data-pin="' + n + '" aria-pressed="' + on + '" aria-label="Quille ' + n + '" style="--k:' + (k++) + '">' + n + '</button>';
+        return '<button type="button" class="pin' + (on ? ' sel' : '') + '" data-pin="' + n + '" aria-pressed="' + on + '" aria-label="' + esc(t('pin', n)) + '" style="--k:' + (k++) + '">' + n + '</button>';
       }).join('') + '</div>';
     }).join('');
 
@@ -1115,16 +1618,17 @@
     // Historique
     var hist = g.log.slice().reverse();
     $('history').innerHTML = hist.map(function (h) {
-      if (h.sep) return '<li class="sep">' + esc(h.sep) + '</li>';
-      var det = h.pins.length === 0 ? 'Manqué'
-        : (h.pins.length === 1 ? 'Quille n°' + h.pins[0] : plural(h.pins.length, 'quille') + ' (' + h.pins.join(', ') + ')');
+      if (h.sep) return '<li class="sep">' + esc(noteText(h.sep)) + '</li>';
+      var det = h.pins.length === 0 ? t('hMiss')
+        : (h.pins.length === 1 ? t('hOne', h.pins[0]) : t('hMany', h.pins.length, h.pins.join(', ')));
       return '<li>' +
         '<span class="h-who">' + esc(h.name) + '</span>' +
         '<span class="h-pts">+' + h.pts + '</span>' +
-        '<span class="h-det">' + det + '</span>' +
-        '<span class="h-tot">total ' + h.total + '</span>' +
+        '<span class="h-det">' + esc(det) + '</span>' +
+        '<span class="h-tot">' + esc(t('hTotal', h.total)) + '</span>' +
         (h.notes.length ? '<span class="h-note">' + h.notes.map(function (n) {
-          return '<span class="' + (n.indexOf('Bâtard') === 0 ? 'n-batard' : 'n-info') + '">' + esc(n) + '</span>';
+          var bat = typeof n === 'string' ? n.indexOf('Bâtard') === 0 : n.k === 'batard';
+          return '<span class="' + (bat ? 'n-batard' : 'n-info') + '">' + esc(noteText(n)) + '</span>';
         }).join('') + '</span>' : '') +
         '</li>';
     }).join('');
@@ -1145,45 +1649,43 @@
 
     if (pins.length === 0) {
       var m = p.misses + 1;
-      html = 'Aucune quille : lancer manqué (' + m + '/3)';
+      html = esc(t('pMiss', m));
       if (m >= 3) {
         if (g.missMode === 'elim') {
-          html += '<span class="bad">3e lancer manqué : ' + esc(p.name) + ' sera éliminé</span>';
+          html += '<span class="bad">' + esc(t('pThirdElim', p.name)) + '</span>';
           var alive = inPlay(g);
           if (alive.length === 2) {
             var other = alive[0] === g.current ? alive[1] : alive[0];
-            html += '<span class="win">' + esc(g.players[other].name) + ' gagnera la partie</span>';
+            html += '<span class="win">' + esc(t('pWillWin', g.players[other].name)) + '</span>';
             lastOfRound = false; // la fin de partie est déjà annoncée
           }
         } else {
-          html += '<span class="bad">3e lancer manqué : retour à 0</span>';
+          html += '<span class="bad">' + esc(t('pThirdZero')) + '</span>';
         }
       }
-      $('validate-btn').textContent = 'Manqué (0)';
+      $('validate-btn').textContent = t('bMiss');
     } else {
       var res = scoreThrow(g, pts);
-      html = (pins.length === 1
-        ? '1 quille (n°' + pins[0] + ') : ' + pts + ' pts'
-        : plural(pins.length, 'quille') + ' : ' + pts + ' pts') + ' · total ' + (p.score + pts);
+      html = esc((pins.length === 1 ? t('pOne', pins[0], pts) : t('pMany', pins.length, pts)) + t('pTotal', p.score + pts));
       if (res.over) {
-        html += '<span class="warn">Dépasse ' + g.target + ' : retour à ' + g.back + '</span>';
+        html += '<span class="warn">' + esc(t('pOver', g.target, g.back)) + '</span>';
       } else if (res.total === g.target) {
         reachesTarget = true;
-        if (!lastOfRound) html += '<span class="win">Atteint ' + g.target + ' ! On finit le tour</span>';
-        else if (reached.length > 0) html += '<span class="win">Égalité à ' + g.target + ' → barrage</span>';
-        else html += '<span class="win">Victoire !</span>';
+        if (!lastOfRound) html += '<span class="win">' + esc(t('pReach', g.target)) + '</span>';
+        else if (reached.length > 0) html += '<span class="win">' + esc(t('pTie', g.target)) + '</span>';
+        else html += '<span class="win">' + esc(t('pVictory')) + '</span>';
       }
       res.victims.forEach(function (v) {
-        html += '<span class="pill batard">' + esc(batardText(g, v)) + '</span>';
+        html += '<span class="pill batard">' + esc(t('batard', g.players[v.i].name, v.to)) + '</span>';
       });
-      $('validate-btn').textContent = 'Valider : +' + pts;
+      $('validate-btn').textContent = t('bValidate', pts);
     }
 
     // Dernier lancer du tour alors que quelqu'un a déjà l'objectif
     if (lastOfRound && !reachesTarget && reached.length === 1) {
-      html += '<span class="win">Fin du tour : ' + esc(g.players[reached[0]].name) + ' gagne</span>';
+      html += '<span class="win">' + esc(t('pEndWin', g.players[reached[0]].name)) + '</span>';
     } else if (lastOfRound && !reachesTarget && reached.length > 1) {
-      html += '<span class="win">Fin du tour : barrage entre ' + esc(nameList(g, reached)) + '</span>';
+      html += '<span class="win">' + esc(t('pEndPlayoff', nameList(g, reached))) + '</span>';
     }
     $('preview').innerHTML = html;
   }
@@ -1238,29 +1740,29 @@
       over = res.over;
       raw = p.score + pts;
       victims = res.victims.map(function (v) { return v.i; });
-      if (res.over) notes.push('dépasse ' + g.target + ' → retour à ' + g.back);
+      if (res.over) notes.push({ k: 'nOver', a: [g.target, g.back] });
       res.victims.forEach(function (v) {
-        notes.push(batardText(g, v));
+        notes.push({ k: 'batard', a: [g.players[v.i].name, v.to] });
         g.players[v.i].score = v.to;
       });
       p.score = res.total;
       if (p.score === g.target) {
         p.done = true;
-        notes.push(g.target + ' atteint !');
+        notes.push({ k: 'nReached', a: [g.target] });
       }
     } else {
       p.misses += 1;
       if (p.misses >= 3) {
         if (g.missMode === 'elim') {
           p.eliminated = true;
-          notes.push('3e manqué : éliminé');
+          notes.push({ k: 'nThirdElim' });
         } else {
           p.score = 0;
           p.misses = 0;
-          notes.push('3e manqué : retour à 0');
+          notes.push({ k: 'nThirdZero' });
         }
       } else {
-        notes.push('manqué ' + p.misses + '/3');
+        notes.push({ k: 'nMiss', a: [p.misses] });
       }
     }
 
@@ -1286,11 +1788,11 @@
     else if (fx.victims.length) buzz([40, 30, 90]);
     else if (fx.reached) buzz([30, 50, 30, 50, 120]);
     var fell = fx.playoff ? [] : fx.victims.map(function (i) {
-      return g.players[i].name + ' retombe à ' + g.players[i].score;
+      return t('fell', g.players[i].name, g.players[i].score);
     });
-    var overLine = fx.over ? p.name + ' : ' + fx.raw + ' → retour à ' + g.back : '';
+    var overLine = fx.over ? t('overLine', p.name, fx.raw, g.back) : '';
     var missLine = pts === 0 && before[thrower].misses === 2
-      ? (p.eliminated ? p.name + ' est hors jeu' : p.name + ' retombe à 0') : '';
+      ? (p.eliminated ? t('missOut', p.name) : t('fell', p.name, 0)) : '';
     fx = null;
     // Un seul message à la fois : Bâtard, puis dépassement, puis 3 ratés, puis Pascal
     if (fell.length) showBatard(fell);
@@ -1431,7 +1933,7 @@
     };
     $('fo-left').innerHTML = side(names.slice(0, half));
     $('fo-right').innerHTML = side(names.slice(half));
-    $('fo-target').textContent = 'premier à ' + PLAYOFF.target;
+    $('fo-target').textContent = t('foTarget', PLAYOFF.target);
     var el = $('faceoff');
     el.classList.remove('hidden');
     restartClass(el, 'show');
@@ -1503,14 +2005,13 @@
   }
 
   // ---------- Private joke : exactement 2 quilles ----------
-  var PASCAL_LINES = ['Oh la belle Pascal !', 'Pascal serait fier de toi', 'Une classique Pascal'];
   var pascalTimer = null;
 
   function showPascal(pins) {
     var el = $('pascal');
     $('pascal-pin-a').textContent = pins[0];
     $('pascal-pin-b').textContent = pins[1];
-    $('pascal-text').textContent = PASCAL_LINES[Math.floor(Math.random() * PASCAL_LINES.length)];
+    $('pascal-text').textContent = pick(t('linesPascal'));
     el.classList.remove('hidden', 'show');
     void el.offsetWidth; // relance l'animation si le message est déjà affiché
     el.classList.add('show');
@@ -1526,20 +2027,11 @@
   $('pascal').addEventListener('click', hidePascal);
 
   // ---------- Message Bâtard : un joueur égalé retombe ----------
-  var BATARD_LINES = [
-    'Oh non !',
-    'Pas de chance !',
-    'Sans pitié !',
-    'Quelle trahison !',
-    'Fallait pas être là !',
-    'Retour à l\'envoyeur !',
-    'Ça, c\'est bas !'
-  ];
   var batardTimer = null;
 
   function showBatard(fell) {
     var el = $('batard-layer');
-    $('batard-text').textContent = BATARD_LINES[Math.floor(Math.random() * BATARD_LINES.length)];
+    $('batard-text').textContent = pick(t('linesBatard'));
     $('batard-sub').innerHTML = fell.map(function (t) { return '<div>' + esc(t) + '</div>'; }).join('');
     el.classList.remove('hidden', 'show');
     void el.offsetWidth;
@@ -1555,19 +2047,11 @@
   $('batard-layer').addEventListener('click', hideBatard);
 
   // ---------- Message dépassement : au-delà de l'objectif ----------
-  var OVER_LINES = [
-    'Tu es allé trop loin !',
-    'Un peu trop gourmand !',
-    'Ça déborde !',
-    'Trop fort, trop loin !',
-    'Retour à la case départ… ou presque !',
-    'Fallait viser moins haut !'
-  ];
   var overTimer = null;
 
   function showOver(line) {
     var el = $('over-layer');
-    $('over-text').textContent = OVER_LINES[Math.floor(Math.random() * OVER_LINES.length)];
+    $('over-text').textContent = pick(t('linesOver'));
     $('over-sub').textContent = line;
     el.classList.remove('hidden', 'show');
     void el.offsetWidth;
@@ -1583,19 +2067,11 @@
   $('over-layer').addEventListener('click', hideOver);
 
   // ---------- Message 3 lancers manqués d'affilée ----------
-  var MISS_LINES = [
-    'Jamais deux sans trois…',
-    'Trois fois rien !',
-    'Les quilles te boudent !',
-    'Triple zéro !',
-    'Même le vent a fait mieux',
-    'C\'est pas ton jour !'
-  ];
   var missTimer = null;
 
   function showMiss(line) {
     var el = $('miss-layer');
-    $('miss-text').textContent = MISS_LINES[Math.floor(Math.random() * MISS_LINES.length)];
+    $('miss-text').textContent = pick(t('linesMiss'));
     $('miss-sub').textContent = line;
     el.classList.remove('hidden', 'show');
     void el.offsetWidth;
@@ -1617,7 +2093,7 @@
       var w = g.players[alive[0]];
       g.winner = alive[0];
       g.winReason = w.done ? (g.level ? 'playoff' : 'target') : 'last';
-      entry.notes.push(w.done ? w.name + ' gagne !' : w.name + ' est le dernier en jeu : victoire !');
+      entry.notes.push({ k: w.done ? 'nWins' : 'nLast', a: [w.name] });
       return;
     }
 
@@ -1633,8 +2109,8 @@
     if (reached.length === 1) {
       g.winner = reached[0];
       g.winReason = g.level ? 'playoff' : 'target';
-      entry.notes.push(reached[0] === g.current ? 'victoire !'
-        : 'fin du tour : ' + g.players[reached[0]].name + ' gagne !');
+      entry.notes.push(reached[0] === g.current ? { k: 'nVictory' }
+        : { k: 'nEndWin', a: [g.players[reached[0]].name] });
       return;
     }
     if (reached.length > 1) {
@@ -1648,8 +2124,7 @@
 
   function startPlayoff(g, finalists) {
     g.log.push({
-      sep: 'Égalité à ' + g.target + ' entre ' + nameList(g, finalists) +
-        ' : barrage, premier à ' + PLAYOFF.target + ' !'
+      sep: { k: 'sepPlayoff', a: [g.target, nameList(g, finalists), PLAYOFF.target] }
     });
     finalists.forEach(function (i) {
       var p = g.players[i];
@@ -1679,7 +2154,7 @@
   $('undo-btn').addEventListener('click', undoLast);
 
   $('new-game-btn').addEventListener('click', function () {
-    openModal('Abandonner la partie en cours et revenir aux réglages ? Les scores seront perdus.', function () {
+    openModal(t('abandon'), function () {
       state.game = null;
       state.undo = [];
       selected = [];
@@ -1690,23 +2165,24 @@
   });
 
   // ---------- Écran 3 : victoire ----------
-  var WIN_REASONS = {
-    target: 'Pile ' + MAIN.target + ' points',
-    playoff: 'Vainqueur du barrage, pile ' + PLAYOFF.target,
-    last: 'Dernier joueur encore en jeu'
-  };
+  function winReason(r) {
+    if (r === 'target') return t('win.target', MAIN.target);
+    if (r === 'playoff') return t('win.playoff', PLAYOFF.target);
+    if (r === 'last') return t('win.last');
+    return '';
+  }
 
   // « 50 · barrage 12 » pour un finaliste, sinon simplement le score
   function scoreLabel(p) {
     var parts = p.past.concat([p.score]);
-    return parts.map(function (s, k) { return k === 0 ? String(s) : 'barrage ' + s; }).join(' · ');
+    return parts.map(function (s, k) { return k === 0 ? String(s) : t('rankPlayoff', s); }).join(' · ');
   }
 
   function renderWin() {
     var g = state.game;
     setModeTag($('mode-tag-win'), g.gameMode);
-    $('winner-name').textContent = g.players[g.winner].name;
-    $('win-reason').textContent = WIN_REASONS[g.winReason] || '';
+    $('winner-title').textContent = t('winTitle', g.players[g.winner].name);
+    $('win-reason').textContent = winReason(g.winReason);
 
     var order = g.players.map(function (p, i) { return { p: p, i: i }; });
     order.sort(function (a, b) {
@@ -1719,11 +2195,11 @@
     });
     $('ranking').innerHTML = order.map(function (o, k) {
       var cls = (o.i === g.winner ? 'first' : '') + (o.p.eliminated ? ' out' : '');
-      var tag = o.p.eliminated ? '<span class="tag elim">' + (o.p.past.length ? 'éliminé au barrage' : 'éliminé') + '</span>' : '';
+      var tag = o.p.eliminated ? '<span class="tag elim">' + esc(t(o.p.past.length ? 'tagElimPlayoff' : 'tagElim')) + '</span>' : '';
       return '<li class="' + cls + '" style="--k:' + k + '">' +
         '<span class="rk">' + (k + 1) + '</span>' +
         '<span class="pname">' + esc(o.p.name) + tag + '</span>' +
-        '<span class="rs">' + scoreLabel(o.p) + '</span>' +
+        '<span class="rs">' + esc(scoreLabel(o.p)) + '</span>' +
         '</li>';
     }).join('');
 
@@ -1790,10 +2266,272 @@
     if (e.key === 'Escape' && !$('modal').classList.contains('hidden')) closeModal();
   });
 
+  // ---------- Panneau Réglages (roue dentée) ----------
+  function showSettingsView(view) {
+    var isLang = view === 'lang';
+    $('view-menu').hidden = isLang;
+    $('view-lang').hidden = !isLang;
+    $('settings-back').hidden = !isLang;
+    $('settings-title').textContent = isLang ? t('lang') : t('settings');
+    var shown = isLang ? $('view-lang') : $('view-menu');
+    if (motionOK()) restartClass(shown, 'view-in');
+  }
+  function renderSettings() {
+    var todo = memos.filter(function (m) { return !m.done; }).length;
+    var badge = $('notes-badge');
+    badge.textContent = todo;
+    badge.classList.toggle('zero', todo === 0);
+    badge.setAttribute('aria-label', t('notesBadge', todo));
+    $('lang-current').textContent = LANGS[lang];
+    document.querySelectorAll('#view-lang [data-lang]').forEach(function (b) {
+      b.setAttribute('aria-checked', String(b.dataset.lang === lang));
+    });
+    if (!$('view-lang').hidden) $('settings-title').textContent = t('lang');
+  }
+  function openSettings(view) {
+    renderSettings();
+    var d = $('settings');
+    if (!d.open) d.showModal();
+    showSettingsView(view || 'menu');
+  }
+  document.querySelectorAll('.gear-btn').forEach(function (b) {
+    b.addEventListener('click', function () { openSettings('menu'); });
+  });
+  $('settings-close').addEventListener('click', function () { $('settings').close(); });
+  $('settings-back').addEventListener('click', function () { showSettingsView('menu'); });
+  $('settings').addEventListener('click', function (e) {
+    if (e.target === $('settings')) $('settings').close(); // toucher le voile sombre
+  });
+  $('row-lang').addEventListener('click', function () { showSettingsView('lang'); });
+  $('row-notes').addEventListener('click', function () {
+    $('settings').close();
+    openNotes();
+  });
+  $('view-lang').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-lang]');
+    if (!b) return;
+    setLang(b.dataset.lang);
+  });
+
+  function setLang(code) {
+    if (!LANGS[code]) return;
+    lang = code;
+    state.lang = code;
+    save();
+    applyI18n();
+    render();
+    renderSettings();
+    renderMemos();
+  }
+
+  // ---------- Notes (liste à cocher façon Rappels) ----------
+  var memos = [];       // { id, text, done }
+  var memosOpen = false;
+  var memoMsgTimer = null;
+
+  function loadMemos() {
+    try {
+      var list = JSON.parse(localStorage.getItem(NOTES_KEY) || '[]');
+      if (Array.isArray(list)) {
+        memos = list.filter(function (m) { return m && typeof m.text === 'string'; });
+      }
+    } catch (e) { memos = []; }
+  }
+  function saveMemos() {
+    try { localStorage.setItem(NOTES_KEY, JSON.stringify(memos)); } catch (e) { /* stockage indisponible */ }
+  }
+  function findMemo(id) {
+    for (var k = 0; k < memos.length; k++) if (memos[k].id === id) return memos[k];
+    return null;
+  }
+  function autoGrow(el) {
+    el.style.height = 'auto';
+    el.style.height = el.scrollHeight + 'px';
+  }
+  function memoItem(m) {
+    var li = document.createElement('li');
+    li.className = 'note' + (m.done ? ' checked' : '');
+    li.dataset.id = m.id;
+    var circle = document.createElement('button');
+    circle.type = 'button';
+    circle.className = 'note-circle';
+    circle.setAttribute('aria-label', t(m.done ? 'markTodo' : 'markDone'));
+    circle.setAttribute('aria-pressed', String(m.done));
+    var txt = document.createElement('textarea');
+    txt.className = 'note-text';
+    txt.rows = 1;
+    txt.maxLength = 1000;
+    txt.setAttribute('autocapitalize', 'sentences');
+    txt.setAttribute('aria-label', t('notes'));
+    txt.value = m.text; // texte mis dans un champ : aucun HTML interprété
+    li.appendChild(circle);
+    li.appendChild(txt);
+    return li;
+  }
+  function renderMemos() {
+    if (!memosOpen) return;
+    var todo = memos.filter(function (m) { return !m.done; });
+    var done = memos.filter(function (m) { return m.done; });
+    var list = $('notes-list'), doneList = $('notes-done-list');
+    list.textContent = '';
+    doneList.textContent = '';
+    todo.forEach(function (m) { list.appendChild(memoItem(m)); });
+    done.forEach(function (m) { doneList.appendChild(memoItem(m)); });
+    $('notes-empty').hidden = memos.length > 0;
+    $('notes-done-block').hidden = done.length === 0;
+    $('notes-toggle-text').textContent = t('notesDone', done.length);
+    document.querySelectorAll('#notes-page .note-text').forEach(autoGrow);
+    renderSettings();
+  }
+  function memoMessage(text) {
+    var el = $('notes-msg');
+    el.textContent = text;
+    el.hidden = false;
+    clearTimeout(memoMsgTimer);
+    memoMsgTimer = setTimeout(function () { el.hidden = true; }, 2500);
+  }
+  function openNotes() {
+    memosOpen = true;
+    $('notes-menu').hidden = true;
+    $('notes-menu-btn').setAttribute('aria-expanded', 'false');
+    $('notes-msg').hidden = true;
+    $('notes-page').showModal();
+    renderMemos();
+    autoGrow($('notes-new'));
+  }
+  // Retour : on revient au panneau Réglages
+  $('notes-back').addEventListener('click', function () {
+    addNewMemo(false);
+    $('notes-page').close();
+    openSettings('menu');
+  });
+  $('notes-page').addEventListener('close', function () {
+    memosOpen = false;
+    renderSettings();
+  });
+
+  // Ajout : Entrée crée la note et laisse le champ prêt pour la suivante
+  function addNewMemo(keepFocus) {
+    var input = $('notes-new');
+    var text = input.value.trim();
+    if (!text) return;
+    memos.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), text: text, done: false });
+    input.value = '';
+    autoGrow(input);
+    saveMemos();
+    renderMemos();
+    if (keepFocus) input.focus();
+  }
+  $('notes-new').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
+      e.preventDefault();
+      addNewMemo(true);
+    }
+  });
+  $('notes-new').addEventListener('input', function () { autoGrow(this); });
+  $('notes-new').addEventListener('blur', function () { addNewMemo(false); });
+
+  // Modification d'une note existante (enregistrée à chaque frappe)
+  $('notes-page').addEventListener('input', function (e) {
+    var li = e.target.closest('li.note');
+    if (!li || !e.target.classList.contains('note-text')) return;
+    var m = findMemo(li.dataset.id);
+    if (!m) return;
+    m.text = e.target.value;
+    autoGrow(e.target);
+    saveMemos();
+  });
+  $('notes-page').addEventListener('keydown', function (e) {
+    var li = e.target.closest('li.note');
+    if (li && e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
+      e.preventDefault();
+      e.target.blur();
+    }
+  });
+  // Note vidée : supprimée en quittant le champ
+  $('notes-page').addEventListener('focusout', function (e) {
+    var li = e.target.closest('li.note');
+    if (!li || !e.target.classList.contains('note-text')) return;
+    var m = findMemo(li.dataset.id);
+    if (m && !m.text.trim()) {
+      memos.splice(memos.indexOf(m), 1);
+      saveMemos();
+      renderMemos();
+    } else if (m && m.text !== m.text.trim()) {
+      m.text = m.text.trim();
+      saveMemos();
+    }
+  });
+  // Cocher / décocher : petit délai pour voir la coche avant que la note change de liste
+  $('notes-page').addEventListener('click', function (e) {
+    var c = e.target.closest('.note-circle');
+    if (!c || c.classList.contains('add')) return;
+    var li = c.closest('li.note');
+    var m = li && findMemo(li.dataset.id);
+    if (!m) return;
+    m.done = !m.done;
+    saveMemos();
+    li.classList.toggle('checked', m.done);
+    if (motionOK()) restartClass(li, 'pop');
+    buzz(15);
+    setTimeout(renderMemos, motionOK() ? 350 : 0);
+  });
+
+  // Terminées (N) : repliée par défaut
+  $('notes-toggle').addEventListener('click', function () {
+    var open = this.getAttribute('aria-expanded') !== 'true';
+    this.setAttribute('aria-expanded', String(open));
+    $('notes-done-list').hidden = !open;
+    if (open) document.querySelectorAll('#notes-done-list .note-text').forEach(autoGrow);
+  });
+
+  // Menu « … »
+  function toggleMemoMenu(open) {
+    $('notes-menu').hidden = !open;
+    $('notes-menu-btn').setAttribute('aria-expanded', String(open));
+  }
+  $('notes-menu-btn').addEventListener('click', function (e) {
+    e.stopPropagation();
+    toggleMemoMenu($('notes-menu').hidden);
+  });
+  $('notes-page').addEventListener('click', function (e) {
+    if (!$('notes-menu').hidden && !e.target.closest('#notes-menu')) toggleMemoMenu(false);
+  });
+  $('notes-copy').addEventListener('click', function () {
+    toggleMemoMenu(false);
+    var todo = memos.filter(function (m) { return !m.done; });
+    if (!todo.length) { memoMessage(t('notesNoCopy')); return; }
+    var text = todo.map(function (m) { return '- ' + m.text; }).join('\n');
+    var ok = function () { memoMessage(t('notesCopied', todo.length)); };
+    var fail = function () { memoMessage(t('notesCopyFail')); };
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(ok, fail);
+      else fail();
+    } catch (err) { fail(); }
+  });
+  $('notes-clear').addEventListener('click', function () {
+    toggleMemoMenu(false);
+    var n = memos.filter(function (m) { return m.done; }).length;
+    if (!n || !window.confirm(t('notesClearAsk', n))) return;
+    memos = memos.filter(function (m) { return !m.done; });
+    saveMemos();
+    renderMemos();
+    memoMessage(t('notesCleared', n));
+  });
+
   // ---------- Démarrage ----------
   document.querySelectorAll('.app-version').forEach(function (el) { el.textContent = 'v' + APP_VERSION; });
   load();
+  if (!state.lang) {
+    // Première ouverture : langue du téléphone (français par défaut)
+    var nav = String(navigator.language || 'fr').slice(0, 2).toLowerCase();
+    state.lang = LANGS[nav] ? nav : 'fr';
+  }
+  lang = state.lang;
+  loadMemos();
+  applyI18n();
   render();
+  renderSettings();
 
   // Fonctionnement hors réseau (service worker, chemin relatif pour GitHub Pages)
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
