@@ -948,10 +948,11 @@
 (function () {
   'use strict';
 
-  var APP_VERSION = '2.0'; // à augmenter à chaque mise à jour (1.1, 1.2...)
+  var APP_VERSION = '2.1'; // à augmenter à chaque mise à jour (1.1, 1.2...)
   var STORAGE_KEY = 'molkky-compteur-v1';
   var NOTES_KEY = 'molkky-notes';
   var MAIN = { target: 50, back: 25 };     // partie principale
+  var MAX_PTS = 12;                        // points maximum en un lancer
   var PLAYOFF = { target: 12, back: 6 };   // barrage
   var PIN_ROWS = [[7, 9, 8], [5, 11, 12, 6], [3, 10, 4], [1, 2]];
   var LANGS = { fr: 'Français', en: 'English', es: 'Español' };
@@ -1375,10 +1376,16 @@
     var p = g.players[i];
     return !p.eliminated && !p.done;
   }
-  // Prochaine position de ce tour où un joueur doit lancer, ou -1 si le tour est fini
+  // Prochaine position de ce tour où un joueur doit lancer, ou -1 si le tour est fini.
+  // Quand quelqu'un a déjà l'objectif, on saute les joueurs qui ne peuvent plus
+  // l'égaler en un lancer (12 points au maximum).
   function nextInRound(g, fromPos) {
+    var someoneReached = reachedList(g).length > 0;
     for (var k = fromPos + 1; k < g.order.length; k++) {
-      if (canThrow(g, g.order[k])) return k;
+      var i = g.order[k];
+      if (!canThrow(g, i)) continue;
+      if (someoneReached && g.target - g.players[i].score > MAX_PTS) continue;
+      return k;
     }
     return -1;
   }
@@ -1671,7 +1678,13 @@
         html += '<span class="warn">' + esc(t('pOver', g.target, g.back)) + '</span>';
       } else if (res.total === g.target) {
         reachesTarget = true;
-        if (!lastOfRound) html += '<span class="win">' + esc(t('pReach', g.target)) + '</span>';
+        // Seuls les joueurs suivants à 12 points ou moins de l'objectif pourront encore égaler
+        var canTie = false;
+        for (var k = g.pos + 1; k < g.order.length; k++) {
+          var j = g.order[k];
+          if (canThrow(g, j) && g.target - g.players[j].score <= MAX_PTS) canTie = true;
+        }
+        if (canTie) html += '<span class="win">' + esc(t('pReach', g.target)) + '</span>';
         else if (reached.length > 0) html += '<span class="win">' + esc(t('pTie', g.target)) + '</span>';
         else html += '<span class="win">' + esc(t('pVictory')) + '</span>';
       }
