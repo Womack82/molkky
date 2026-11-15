@@ -545,7 +545,7 @@
   .sheet-head h2 { margin: 0; text-align: center; grid-column: 2; }
   .sheet-head #settings-back { grid-column: 1; grid-row: 1; }
   .sheet-head #settings-close { grid-column: 3; grid-row: 1; }
-  .sheet-head .sheet-ver { grid-column: 2; grid-row: 2; margin: 2px 0 0; text-align: center; align-self: auto; padding: 0; }
+  .sheet-ver { display: block; margin: 14px 0 0; padding: 0; text-align: center; }
   .round {
     width: 44px; height: 44px; min-width: 44px; min-height: 44px; padding: 0;
     border: 0; border-radius: 50%; background: var(--card); color: var(--text);
@@ -864,7 +864,6 @@
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
       </button>
       <h2 id="settings-title" data-i18n="settings">Réglages</h2>
-      <span class="app-version sheet-ver"></span>
       <button type="button" id="settings-close" class="round" data-i18n-aria="close" aria-label="Fermer">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
       </button>
@@ -888,6 +887,7 @@
       <button type="button" class="set-row" role="radio" data-lang="en" lang="en"><span class="set-txt">English</span><span class="set-check" aria-hidden="true"></span></button>
       <button type="button" class="set-row" role="radio" data-lang="es" lang="es"><span class="set-txt">Español</span><span class="set-check" aria-hidden="true"></span></button>
     </div>
+    <span class="app-version sheet-ver"></span>
   </div>
 </dialog>
 
@@ -936,7 +936,7 @@
 (function () {
   'use strict';
 
-  var APP_VERSION = '2.2'; // à augmenter à chaque mise à jour (1.1, 1.2...)
+  var APP_VERSION = '2.3'; // à augmenter à chaque mise à jour (1.1, 1.2...)
   var STORAGE_KEY = 'molkky-compteur-v1';
   var NOTES_KEY = 'molkky-notes';
   var MAIN = { target: 50, back: 25 };     // partie principale
