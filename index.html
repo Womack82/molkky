@@ -63,18 +63,8 @@
   }
   .app-version { font-size: 12px; font-weight: 500; color: var(--text-2); margin-left: -4px; align-self: flex-end; padding-bottom: 3px; }
   .logo { width: 32px; height: 32px; flex: none; display: block; }
-  /* Logo centré de l'écran Réglages (recadré sur le logo-clair.jpg) */
-  .hero { display: flex; justify-content: center; align-items: flex-end; gap: 6px; margin: 10px 0 20px; }
-  .hero-logo {
-    --s: .2019; /* 210 px affichés pour les 1040 px utiles de l'image */
-    width: calc(1040px * var(--s)); height: calc(300px * var(--s));
-    overflow: hidden; opacity: .85; flex: none;
-  }
-  .hero-logo img {
-    display: block; width: calc(1800px * var(--s)); height: auto; max-width: none;
-    margin: calc(-150px * var(--s)) 0 0 calc(-380px * var(--s));
-  }
-  .hero .app-version { margin: 0; padding-bottom: 2px; align-self: flex-end; }
+  /* En-tête de l'accueil : seulement la roue Réglages, à droite */
+  .hero { display: flex; justify-content: flex-end; align-items: center; margin: 10px 0 16px; }
 
   /* Rappel des règles repliable */
   .rules-card summary {
@@ -534,8 +524,6 @@
   }
   .gear-btn svg { width: 24px; height: 24px; transition: transform .28s ease-out; }
   .gear-btn:active svg { transform: rotate(60deg); }
-  .hero { position: relative; }
-  .gear-float { position: absolute; right: 0; top: 50%; margin-top: -22px; }
   .head-btns { display: flex; gap: 8px; align-items: center; flex: none; }
   @media (max-width: 400px) {
     .head-btns #new-game-btn { max-width: 112px; padding: 4px 10px; line-height: 1.15; }
@@ -557,6 +545,7 @@
   .sheet-head h2 { margin: 0; text-align: center; grid-column: 2; }
   .sheet-head #settings-back { grid-column: 1; grid-row: 1; }
   .sheet-head #settings-close { grid-column: 3; grid-row: 1; }
+  .sheet-head .sheet-ver { grid-column: 2; grid-row: 2; margin: 2px 0 0; text-align: center; align-self: auto; padding: 0; }
   .round {
     width: 44px; height: 44px; min-width: 44px; min-height: 44px; padding: 0;
     border: 0; border-radius: 50%; background: var(--card); color: var(--text);
@@ -690,9 +679,7 @@
   <section id="screen-setup">
     <header class="hero">
       <h1 class="sr" data-i18n="title">Mölkky – Compteur de points</h1>
-      <div class="hero-logo"><img src="icons/logo-clair.jpg" alt="" width="1800" height="600"></div>
-      <span class="app-version"></span>
-      <button type="button" class="gear-btn gear-float" data-i18n-aria="settings" aria-label="Réglages"><svg aria-hidden="true"><use href="#gear"/></svg></button>
+      <button type="button" class="gear-btn" data-i18n-aria="settings" aria-label="Réglages"><svg aria-hidden="true"><use href="#gear"/></svg></button>
     </header>
 
     <div class="modes" role="radiogroup" aria-label="Mode de jeu" data-i18n-aria="modeAria">
@@ -877,6 +864,7 @@
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
       </button>
       <h2 id="settings-title" data-i18n="settings">Réglages</h2>
+      <span class="app-version sheet-ver"></span>
       <button type="button" id="settings-close" class="round" data-i18n-aria="close" aria-label="Fermer">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
       </button>
@@ -948,7 +936,7 @@
 (function () {
   'use strict';
 
-  var APP_VERSION = '2.1'; // à augmenter à chaque mise à jour (1.1, 1.2...)
+  var APP_VERSION = '2.2'; // à augmenter à chaque mise à jour (1.1, 1.2...)
   var STORAGE_KEY = 'molkky-compteur-v1';
   var NOTES_KEY = 'molkky-notes';
   var MAIN = { target: 50, back: 25 };     // partie principale
