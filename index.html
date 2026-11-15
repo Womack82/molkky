@@ -57,14 +57,14 @@
     gap: 12px; margin: 4px 0 16px;
   }
   .brand-wrap { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-  h1.brand {
+  .brand {
     font-size: 28px; font-weight: 700; margin: 0; line-height: 1.1;
     display: inline-flex; align-items: center; gap: 6px;
   }
   .app-version { font-size: 12px; font-weight: 500; color: var(--text-2); margin-left: -4px; align-self: flex-end; padding-bottom: 3px; }
   .logo { width: 32px; height: 32px; flex: none; display: block; }
-  /* En-tête de l'accueil : seulement la roue Réglages, à droite */
-  .hero { display: flex; justify-content: flex-end; align-items: center; margin: 10px 0 16px; }
+  /* En-tête de l'accueil : titre à gauche, roue Réglages à droite */
+  .hero { display: flex; justify-content: space-between; align-items: center; margin: 10px 0 16px; }
 
   /* Rappel des règles repliable */
   .rules-card summary {
@@ -679,6 +679,7 @@
   <section id="screen-setup">
     <header class="hero">
       <h1 class="sr" data-i18n="title">Mölkky – Compteur de points</h1>
+      <div class="brand" aria-hidden="true">Mölkky</div>
       <button type="button" class="gear-btn" data-i18n-aria="settings" aria-label="Réglages"><svg aria-hidden="true"><use href="#gear"/></svg></button>
     </header>
 
@@ -936,7 +937,7 @@
 (function () {
   'use strict';
 
-  var APP_VERSION = '2.3'; // à augmenter à chaque mise à jour (1.1, 1.2...)
+  var APP_VERSION = '2.4'; // à augmenter à chaque mise à jour (1.1, 1.2...)
   var STORAGE_KEY = 'molkky-compteur-v1';
   var NOTES_KEY = 'molkky-notes';
   var MAIN = { target: 50, back: 25 };     // partie principale
