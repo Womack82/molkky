@@ -1,4 +1,4 @@
-![Mölkky](icons/logo-clair.jpg)
+![Mölkky](icons/logo-clair.png)
 
 # Mölkky – Compteur de points
 

@@ -1,15 +1,18 @@
 // Service worker : garde l'app en cache pour qu'elle marche sans réseau.
 // Changer CACHE à chaque mise à jour des fichiers listés pour forcer les téléphones à les recharger.
-const CACHE = 'molkky-2.7'; // suit la version de l'app (APP_VERSION dans index.html)
+const CACHE = 'molkky-2.9'; // suit la version de l'app (APP_VERSION dans index.html)
 const ASSETS = [
   './',
   'index.html',
   'manifest.webmanifest',
-  'icons/icone-1024.jpg',
-  'icons/icone-32.jpg',
-  'icons/icone-180.jpg',
-  'icons/icone-192.jpg',
-  'icons/icone-512.jpg'
+  'icons/web/favicon.ico',
+  'icons/web/favicon-16.png',
+  'icons/web/favicon-32.png',
+  'icons/web/apple-touch-icon.png',
+  'icons/web/icon-192.png',
+  'icons/web/icon-512.png',
+  'icons/web/icon-maskable-192.png',
+  'icons/web/icon-maskable-512.png'
 ];
 
 self.addEventListener('install', (event) => {
