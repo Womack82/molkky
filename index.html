@@ -936,7 +936,7 @@
   .mode span { border-radius: 20px; }
   .set-row { border-radius: 16px; }
   .notes-menu button { border-radius: 10px; }
-  .pin, .gear-btn, .round, .note-circle { border-radius: 50%; }
+  .pin, .gear-btn, .round, .note-circle, ol.players li button.icon { border-radius: 50%; }
 
   /* Réglage « réduire les animations » du téléphone : aucune animation */
   @media (prefers-reduced-motion: reduce) {
@@ -1241,7 +1241,7 @@
 (function () {
   'use strict';
 
-  var APP_VERSION = '2.9'; // à augmenter à chaque mise à jour (1.1, 1.2...)
+  var APP_VERSION = '3.0'; // à augmenter à chaque mise à jour (1.1, 1.2...)
   var STORAGE_KEY = 'molkky-compteur-v1';
   var NOTES_KEY = 'molkky-notes';
   var MAIN = { target: 50, back: 25 };     // partie principale
