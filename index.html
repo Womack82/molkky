@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#5C5346">
+<meta name="theme-color" content="#FFF8F4">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Mölkky">
@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400..800&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #F0F2EF;        /* fond de page, lignes joueurs */
@@ -32,7 +32,7 @@
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: "Fredoka", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-family: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     font-size: 16px;
     font-weight: 400;
     line-height: 1.4;
@@ -77,7 +77,7 @@
   .rules-card summary:focus-visible { outline: 3px solid var(--text); outline-offset: 4px; border-radius: 8px; }
   .rules-card .chevron { flex: none; transition: transform .2s; }
   .rules-card[open] .chevron { transform: rotate(180deg); }
-  .rules-card[open] ul.rules { margin-top: 14px; }
+  .rules-card[open] ul.rules, .rules-card[open] ol.history { margin-top: 14px; }
   h2 { font-size: 18px; font-weight: 600; margin: 0 0 12px; }
 
   .mode-tag {
@@ -638,8 +638,305 @@
   .notes-chev { transition: transform .2s; }
   .notes-toggle[aria-expanded="true"] .notes-chev { transform: rotate(90deg); }
 
+
+  /* ============================================================
+     Charte « Guinguette & Apéro » (v2.5)
+     Ivoire ensoleillé, terracotta, ocre, sauge menthe.
+     Boutons et quilles en pilules tactiles (rebord qui s'écrase au toucher).
+     ============================================================ */
+  :root {
+    --bg: #FFF8F4;          /* fond ivoire */
+    --card: #FFFFFF;
+    --text: #201B14;        /* cacao foncé */
+    --text-2: #57423D;
+    --line: #DEC0B9;
+    --sage: #FFAB69;        /* accent ocre (fonds clairs, texte sur fond sombre) */
+    --rose: #A33D23;        /* terracotta profond : actions */
+    --on-rose: #FFFFFF;
+    --backdrop: rgba(45, 35, 30, .45);
+    --terra: #E76F51;       /* terracotta pêche */
+    --terra-rim: #C9563A;
+    --rose-rim: #83260E;
+    --cocoa: #362F28;
+    --cream: #F8ECE0;
+    --cream-low: #FEF1E6;
+    --pin-bg: #F4EFE6;
+    --input: #F5F2EB;
+    --gold: #F4A261;
+    --amber-bg: #FFDCC4;
+    --amber-text: #8E4E14;
+    --mint-bg: #E6F4F1;
+    --mint: #006A60;
+    --peach-bg: #FDEDEA;
+    --shadow-card: 0 4px 16px -2px rgba(120, 111, 102, .10);
+    --rim-cream: 0 4px 0 0 #DEC0B9;
+  }
+  body { font-family: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-weight: 500; }
+  h2 { font-size: 18px; font-weight: 700; letter-spacing: -.01em; }
+  .brand { font-weight: 800; letter-spacing: -.03em; }
+  .hero .brand { font-size: 32px; }
+  .muted { color: var(--text-2); }
+
+  /* Cartes : blanches, coins généreux, ombre chaude */
+  .card { border-radius: 2rem; padding: 18px; box-shadow: var(--shadow-card); border: 1px solid #F0ECE1; }
+
+  /* Boutons : pilules tactiles */
+  button {
+    border: 0; border-radius: 9999px; font-weight: 700;
+    background: var(--cream); color: var(--text);
+    box-shadow: var(--rim-cream);
+    transition: transform .1s, box-shadow .1s, background-color .2s, color .2s;
+  }
+  button:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px 0 0 #DEC0B9; }
+  button.primary { background: var(--rose); color: var(--on-rose); box-shadow: 0 4px 0 0 var(--rose-rim); }
+  button.primary:active:not(:disabled) { box-shadow: 0 2px 0 0 var(--rose-rim); }
+  button.big { background: var(--terra); box-shadow: 0 5px 0 0 var(--rose); font-size: 20px; font-weight: 800; min-height: 58px; letter-spacing: -.01em; }
+  button.big:active:not(:disabled) { box-shadow: 0 1px 0 0 var(--rose); transform: translateY(4px); }
+  button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+  button:disabled { box-shadow: none; }
+
+  input[type=text] {
+    border: 0; border-radius: 9999px; background: var(--input);
+    min-height: 50px; padding: 0 20px; font-weight: 500;
+    transition: box-shadow .2s, background-color .2s;
+  }
+  input[type=text]:focus-visible { outline: none; background: #fff; box-shadow: 0 0 0 2px var(--gold), 0 0 14px rgba(244, 162, 97, .45); }
+  input[type=text]::placeholder { color: rgba(87, 66, 61, .65); }
+
+  /* Choix du mode : la carte choisie passe en terracotta */
+  .mode span {
+    border: 0; border-radius: 2rem; background: var(--cream);
+    box-shadow: 0 4px 0 0 #EDE0D5; min-height: 108px; padding: 16px;
+  }
+  .mode strong { font-size: 21px; font-weight: 800; letter-spacing: -.02em; }
+  .mode small { font-size: 14px; color: var(--text-2); }
+  .mode input:checked + span { background: var(--terra); border-color: transparent; color: #fff; box-shadow: 0 4px 0 0 var(--rose); }
+  .mode input:checked + span small { color: rgba(255, 255, 255, .92); }
+  .mode input:focus-visible + span, .segmented input:focus-visible + span { outline: 3px solid var(--gold); outline-offset: 3px; }
+
+  /* Liste des joueurs (accueil) */
+  ol.players { gap: 8px; }
+  ol.players li { background: var(--cream-low); border-radius: 9999px; padding: 6px 6px 6px 8px; }
+  .num { width: 34px; height: 34px; background: var(--terra); color: #fff; font-weight: 800; font-size: 15px; }
+  ol.players li:nth-child(3n+2) .num { background: #33A395; color: #fff; }
+  ol.players li:nth-child(3n) .num { background: var(--sage); color: #783D01; }
+  .pname { font-weight: 600; }
+  ol.players li button { box-shadow: none; background: transparent; min-height: 40px; min-width: 40px; }
+  ol.players li button:active:not(:disabled) { background: var(--cream); transform: none; box-shadow: none; }
+
+  /* Choix « 3 lancers manqués » */
+  .segmented span { border: 0; border-radius: 9999px; background: var(--cream); min-height: 50px; font-weight: 700; }
+  .segmented input:checked + span { background: var(--peach-bg); color: var(--rose); border-color: transparent; box-shadow: inset 0 0 0 2px var(--terra); }
+  ul.rules strong { font-weight: 700; }
+  .rules-card summary:focus-visible { outline-color: var(--gold); }
+
+  /* Étiquettes */
+  .mode-tag { font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 4px 12px; }
+  .mode-tag.classic { background: var(--mint-bg); color: var(--mint); }
+  .mode-tag.batard { background: var(--amber-bg); color: var(--amber-text); }
+  .tag { font-size: 11px; font-weight: 700; letter-spacing: .03em; padding: 3px 10px; }
+  .tag.elim { background: var(--peach-bg); color: #93000A; }
+  .tag.reach { background: var(--mint-bg); color: var(--mint); }
+
+  /* En-tête de partie */
+  .app-version { color: var(--text-2); }
+  .gear-btn, .round { background: var(--card); color: var(--text); box-shadow: var(--shadow-card); }
+  .gear-btn:active:not(:disabled), .round:active:not(:disabled) { transform: scale(.94); box-shadow: var(--shadow-card); }
+  #new-game-btn { min-height: 44px; font-size: 14px; }
+
+  /* Bandeaux */
+  .banner { border-radius: 1.5rem; font-weight: 600; }
+  .banner.reach { background: var(--cocoa); color: #FBEFE3; }
+  .banner.reach strong { color: var(--sage); font-weight: 800; }
+  .banner.playoff { background: var(--terra); color: #fff; font-weight: 700; }
+
+  /* ---------- Tableau des scores : le joueur en cours passe au premier plan ---------- */
+  .sb-card { background: transparent; box-shadow: none; border: 0; padding: 0; }
+  .scoreboard { gap: 10px; }
+  .hl, .ripple { border-radius: 2rem; }
+  .hl {
+    background: var(--card);
+    box-shadow: 0 10px 28px -6px rgba(163, 61, 35, .28), 0 0 0 2.5px var(--terra);
+  }
+  .pcard {
+    background: var(--cream-low); border-radius: 2rem; padding: 14px 18px 14px;
+  }
+  .pcard:not(.current):not(.out) .nm, .pcard:not(.current):not(.out) .sc { color: var(--text-2); }
+  .pcard.current { background: transparent; padding: 20px 20px 18px; }
+  .pcard.out { opacity: .5; }
+  .pline { gap: 10px; min-height: 34px; }
+  .nm { font-weight: 700; font-size: 17px; }
+  .pcard.current .nm { font-size: 22px; font-weight: 800; letter-spacing: -.02em; color: var(--text); }
+  .arrow {
+    width: 30px; height: 30px; border-radius: 50%; flex: none;
+    background: var(--terra); color: #fff; display: inline-grid; place-items: center;
+    animation: cur-pulse 1.8s ease-in-out infinite;
+  }
+  .arrow svg { width: 16px; height: 16px; }
+  .dots { gap: 5px; }
+  .dots i { width: 10px; height: 10px; border: 2px solid var(--line); background: var(--bg); }
+  .dots i.on { background: var(--terra); border-color: var(--terra); }
+  .sc { font-size: 30px; font-weight: 800; letter-spacing: -.03em; color: var(--text); }
+  .pcard.current .sc { font-size: 56px; letter-spacing: -.04em; color: var(--rose); }
+  .bar { height: 6px; border-radius: 9999px; background: rgba(222, 192, 185, .45); margin-top: 10px; }
+  .bar > i { background: var(--line); border-radius: 9999px; }
+  .pcard.current .bar { height: 8px; background: var(--cream); }
+  .pcard.current .bar > i { background: linear-gradient(90deg, var(--gold), var(--terra)); }
+  .pcard .bar > i.over { background: #BA1A1A; }
+  /* ---------- Cartes joueurs (v2.6) : avatar, nom, ratés, score ---------- */
+  .pcard .pline, .pcard .strip { position: relative; z-index: 1; }
+  .pcard .pline { align-items: center; gap: 12px; }
+  .av {
+    width: 40px; height: 40px; border-radius: 50%; flex: none;
+    display: inline-grid; place-items: center;
+    font-size: 16px; font-weight: 800; line-height: 1;
+    background: #F9D6CC; color: var(--rose);
+  }
+  .av.c1 { background: #D2ECE8; color: #1E6E64; }
+  .av.c2 { background: #FFE4CF; color: #783D01; }
+  .pcard.current .av { width: 44px; height: 44px; font-size: 19px; background: var(--terra); color: #fff; }
+  .pcard.current .av.c1 { background: #33A395; color: #fff; }
+  .pcard.current .av.c2 { background: var(--sage); color: #783D01; }
+  .pmain { flex: 1 1 auto; min-width: 0; display: grid; gap: 4px; }
+  .pc-top, .pc-sub { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-width: 0; }
+  .pc-sub { min-height: 22px; } /* même hauteur avec ou sans « Danger ! » */
+  .yourturn {
+    flex: none; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 9999px;
+    background: var(--mint-bg); color: var(--mint); white-space: nowrap;
+  }
+  .miss-lbl { font-size: 12px; font-weight: 600; color: var(--text-2); }
+  .tag.danger { background: #FFDAD6; color: #93000A; animation: danger-blink 1.2s ease-in-out infinite; }
+  .pscore { flex: none; margin-left: auto; display: inline-flex; align-items: baseline; gap: 2px; }
+  .pscore .sc { margin-left: 0; }
+  .pscore .of { font-size: 13px; font-weight: 700; color: var(--text-2); }
+  .pcard.current .pscore .of { font-size: 16px; }
+  .strip {
+    display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;
+    margin-top: 14px; padding: 10px 16px; border-radius: 9999px; background: var(--cream-low);
+    font-size: 14px; font-weight: 700;
+  }
+  .strip .togo { color: var(--rose); }
+  .strip .rank { color: var(--amber-text); }
+  @keyframes danger-blink { 50% { opacity: .55; } }
+  @keyframes cur-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(231, 111, 81, .45); }
+    50% { box-shadow: 0 0 0 7px rgba(231, 111, 81, 0); }
+  }
+  @keyframes ripple {
+    from { box-shadow: 0 0 0 0 rgba(42, 157, 143, .7); }
+    to { box-shadow: 0 0 0 18px rgba(42, 157, 143, 0); }
+  }
+  @keyframes hit {
+    0% { transform: translateX(0); box-shadow: 0 0 0 3px var(--terra); }
+    20% { transform: translateX(-7px); } 40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); } 80% { transform: translateX(2px); box-shadow: 0 0 0 3px var(--terra); }
+    100% { transform: translateX(0); box-shadow: 0 0 0 0 rgba(231, 111, 81, 0); }
+  }
+
+  /* « Au tour de … » : le nom en grand, en terracotta */
+  .turnline { align-items: center; margin-bottom: 16px; font-weight: 600; }
+  .turnline .who { font-size: 26px; font-weight: 800; letter-spacing: -.02em; color: var(--rose); }
+  #turn-label {
+    flex: none; font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+    color: var(--amber-text); background: var(--amber-bg); padding: 4px 12px; border-radius: 9999px;
+  }
+
+  /* Quilles : galets crème, terracotta une fois touchées */
+  .pins { gap: 12px; margin: 6px 0 18px; }
+  .pins .prow { gap: 12px; }
+  .pin {
+    width: 60px; height: 60px; min-width: 60px;
+    background: var(--pin-bg); border: 0; color: var(--rose);
+    font-size: 24px; font-weight: 800;
+    box-shadow: 0 4px 0 0 #DEC0B9;
+  }
+  .pin.sel { background: var(--terra); color: #fff; box-shadow: 0 4px 0 0 var(--rose); }
+  .pin:active:not(:disabled) { transform: scale(.9); box-shadow: 0 1px 0 0 #DEC0B9; }
+
+  /* Aperçu et actions */
+  .preview { background: var(--cream-low); border-radius: 1.5rem; font-weight: 600; }
+  .preview .win { background: var(--mint-bg); color: var(--mint); }
+  .preview .pill.batard { background: var(--amber-bg); color: var(--amber-text); }
+  .preview .bad { color: #BA1A1A; }
+  .actions { gap: 10px; }
+  .actions button { min-height: 58px; }
+  #undo-btn { color: var(--amber-text); }
+  #validate-btn { font-size: 18px; font-weight: 800; }
+
+  /* Historique */
+  ol.history li { border-top-color: rgba(222, 192, 185, .6); }
+  .h-pts { color: var(--rose); font-weight: 800; }
+  .n-batard { color: var(--amber-text); }
+  ol.history li.sep { background: var(--terra); border-radius: 9999px; }
+
+  /* Victoire : bannière terracotta ensoleillée */
+  .victory {
+    background: linear-gradient(160deg, var(--terra) 0%, var(--rose) 100%); color: #fff;
+    border-radius: 3rem; padding: 30px 20px; box-shadow: 0 10px 30px -8px rgba(163, 61, 35, .45);
+  }
+  .trophy { background: var(--sage); color: #592400; width: 88px; height: 88px; box-shadow: 0 0 0 8px rgba(255, 255, 255, .18); }
+  .victory .winner { font-size: 34px; font-weight: 800; letter-spacing: -.03em; }
+  .victory .win-reason { color: var(--amber-bg); font-weight: 700; }
+  ol.ranking { gap: 8px; }
+  ol.ranking li { background: var(--cream-low); border-radius: 9999px; padding: 8px 16px 8px 8px; }
+  .rk { border: 0; background: var(--cream); color: var(--text); font-weight: 800; }
+  ol.ranking li.first { background: var(--amber-bg); }
+  ol.ranking li.first .rk { background: var(--gold); color: #fff; }
+  .rs { font-weight: 800; }
+  .two button { font-size: 14px; }
+
+  /* Fenêtre de confirmation */
+  .modal-back { backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+  .modal { border-radius: 2rem; padding: 24px; background: var(--bg); }
+  dialog::backdrop { backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+
+  /* Face-à-face du barrage */
+  .fo-left { background: var(--cocoa); color: #FBEFE3; }
+  .fo-right { background: var(--terra); color: #fff; }
+  .fo-side { font-weight: 800; }
+  .fo-center { background: var(--sage); color: #3C1A00; box-shadow: 0 0 0 6px var(--bg); }
+  .fo-center strong { font-weight: 800; }
+
+  /* Messages animés (Pascal, Bâtard, dépassement, 3 manqués) */
+  .pascal-back { background: rgba(45, 35, 30, .45); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+  .pascal-card { background: var(--cocoa); border-radius: 2rem; }
+  .pascal-pins span { background: var(--pin-bg); color: var(--rose); font-weight: 800; box-shadow: 0 4px 0 0 #DEC0B9; }
+  .pascal-text { color: var(--sage); font-weight: 800; }
+  .batard-card { background: var(--amber-bg); color: #3C1A00; border-radius: 2rem; box-shadow: 0 6px 0 0 var(--gold); }
+  .batard-text { font-weight: 800; color: var(--amber-text); }
+  .over-card { background: var(--terra); color: #fff; border-radius: 2rem; box-shadow: 0 6px 0 0 var(--rose); }
+  .over-text { font-weight: 800; }
+  .over-sub { color: var(--amber-bg); }
+  .miss-card { background: var(--bg); border: 3px solid var(--terra); border-radius: 2rem; }
+  .miss-dots i { background: var(--terra); }
+  .miss-text { font-weight: 800; }
+  .miss-sub { color: var(--rose); }
+
+  /* Panneau Réglages et page Notes */
+  .sheet { border-radius: 0 0 2rem 2rem; }
+  .set-row { border-radius: 1.5rem; box-shadow: var(--shadow-card); min-height: 60px; }
+  .set-row:active:not(:disabled) { transform: scale(.99); box-shadow: var(--shadow-card); }
+  .set-ico { background: var(--amber-bg); color: var(--amber-text); border-radius: 50%; }
+  .badge { background: var(--terra); color: #fff; font-weight: 700; }
+  .badge.zero { background: var(--cream); color: var(--text-2); }
+  .set-row[aria-checked="true"] .set-check {
+    border-color: var(--terra); background: var(--terra)
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FFFFFF' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center / 16px no-repeat;
+  }
+  .notes-menu { border-radius: 1.5rem; box-shadow: 0 8px 28px rgba(45, 35, 30, .22); }
+  .notes-menu button, .notes-toggle, .note-circle { box-shadow: none; background: transparent; }
+  .notes-menu button:active:not(:disabled), .notes-toggle:active:not(:disabled) { transform: none; box-shadow: none; background: var(--cream); }
+  .notes-title { font-weight: 800; letter-spacing: -.03em; }
+  .notes-msg { background: var(--cocoa); color: #FBEFE3; border-radius: 9999px; padding: 8px 16px; }
+  .note { border-bottom-color: rgba(222, 192, 185, .6); }
+  .note.checked .note-circle { border-color: var(--terra); background: var(--terra); }
+  .note.checked .note-circle::after {
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FFFFFF' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center / 15px no-repeat;
+  }
+
   /* Réglage « réduire les animations » du téléphone : aucune animation */
   @media (prefers-reduced-motion: reduce) {
+    .tag.danger { animation: none !important; }
     *, *::before, *::after {
       animation-duration: .01ms !important;
       animation-delay: 0s !important;
@@ -653,14 +950,14 @@
 <!-- Logo : les 12 quilles vues de dessus -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="logo" viewBox="0 0 100 100">
-    <rect width="100" height="100" rx="22" fill="#5C5346"/>
-    <g fill="#F0F2EF">
+    <rect width="100" height="100" rx="26" fill="#E76F51"/>
+    <g fill="#FFF8F4">
       <circle cx="30" cy="24" r="9.5"/><circle cx="50" cy="24" r="9.5"/><circle cx="70" cy="24" r="9.5"/>
       <circle cx="20" cy="41.3" r="9.5"/><circle cx="40" cy="41.3" r="9.5"/><circle cx="60" cy="41.3" r="9.5"/><circle cx="80" cy="41.3" r="9.5"/>
       <circle cx="30" cy="58.6" r="9.5"/><circle cx="50" cy="58.6" r="9.5"/><circle cx="70" cy="58.6" r="9.5"/>
       <circle cx="40" cy="75.9" r="9.5"/><circle cx="60" cy="75.9" r="9.5"/>
     </g>
-    <g fill="#5C5346" font-family="Fredoka, system-ui, sans-serif" font-weight="700" font-size="10" text-anchor="middle" dominant-baseline="central">
+    <g fill="#A33D23" font-family="Plus Jakarta Sans, system-ui, sans-serif" font-weight="800" font-size="10" text-anchor="middle" dominant-baseline="central">
       <text x="30" y="24">7</text><text x="50" y="24">9</text><text x="70" y="24">8</text>
       <text x="20" y="41.3">5</text><text x="40" y="41.3">11</text><text x="60" y="41.3">12</text><text x="80" y="41.3">6</text>
       <text x="30" y="58.6">3</text><text x="50" y="58.6">10</text><text x="70" y="58.6">4</text>
@@ -736,7 +1033,7 @@
   <section id="screen-game" class="hidden">
     <header class="top">
       <div class="brand-wrap">
-        <h1 class="brand"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg>Mölkky</h1><span class="app-version"></span>
+        <h1 class="brand">Mölkky</h1>
         <span id="mode-tag-game"></span>
       </div>
       <div class="head-btns">
@@ -747,7 +1044,7 @@
 
     <div id="banners" aria-live="polite"></div>
 
-    <div class="card">
+    <div class="card sb-card">
       <div class="sb-wrap" id="sb-wrap">
         <div class="hl" id="hl" aria-hidden="true"></div>
         <div class="scoreboard" id="scoreboard"></div>
@@ -767,18 +1064,21 @@
       </div>
     </div>
 
-    <div class="card">
-      <h2 data-i18n="history">Historique</h2>
+    <details class="card rules-card history-card" id="history-card">
+      <summary>
+        <h2 data-i18n="history">Historique</h2>
+        <svg class="chevron" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+      </summary>
       <ol class="history" id="history"></ol>
       <p class="muted" id="history-empty" data-i18n="historyEmpty">Aucun lancer pour l'instant.</p>
-    </div>
+    </details>
   </section>
 
   <!-- ÉCRAN 3 : VICTOIRE -->
   <section id="screen-win" class="hidden">
     <header class="top">
       <div class="brand-wrap">
-        <h1 class="brand"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg>Mölkky</h1><span class="app-version"></span>
+        <h1 class="brand">Mölkky</h1>
         <span id="mode-tag-win"></span>
       </div>
       <button type="button" class="gear-btn" data-i18n-aria="settings" aria-label="Réglages"><svg aria-hidden="true"><use href="#gear"/></svg></button>
@@ -937,7 +1237,7 @@
 (function () {
   'use strict';
 
-  var APP_VERSION = '2.4'; // à augmenter à chaque mise à jour (1.1, 1.2...)
+  var APP_VERSION = '2.6'; // à augmenter à chaque mise à jour (1.1, 1.2...)
   var STORAGE_KEY = 'molkky-compteur-v1';
   var NOTES_KEY = 'molkky-notes';
   var MAIN = { target: 50, back: 25 };     // partie principale
@@ -981,6 +1281,11 @@
       bannerPlayoff: function (lv, tg, bk) { return I18N.fr.playoffN(lv) + ' : premier à ' + tg + ' points (au-delà, retour à ' + bk + ').'; },
       bannerReach: function (names, n, tg) { return '<strong>' + names + '</strong>' + (n > 1 ? ' ont' : ' a') + ' atteint ' + tg + ' ! On finit le tour : les joueurs restants peuvent encore égaler.'; },
       tagElim: 'éliminé', tagElimPlayoff: 'éliminé au barrage',
+      tagDanger: 'Danger !', yourTurn: 'À toi !',
+      missCount: function (m) { return m + (m > 1 ? ' fautes' : ' faute'); },
+      ptsToGo: function (n) { return 'Plus que ' + n + ' pts'; },
+      pinHint: function (n) { return '(quille n°' + n + ')'; },
+      rankN: function (r) { return 'Rang #' + r; },
       tagReach: function (tg) { return tg + ' atteint'; },
       dotsTitle: function (m) { return 'Lancers manqués d\'affilée : ' + m + '/3'; },
       dotsAria: function (m) { return m + ' manqué(s) sur 3'; },
@@ -1075,6 +1380,11 @@
       bannerPlayoff: function (lv, tg, bk) { return I18N.en.playoffN(lv) + ': first to ' + tg + ' points (going over drops to ' + bk + ').'; },
       bannerReach: function (names, n, tg) { return '<strong>' + names + '</strong> reached ' + tg + '! Finishing the round: the remaining players can still tie.'; },
       tagElim: 'out', tagElimPlayoff: 'out in play-off',
+      tagDanger: 'Danger!', yourTurn: 'Your turn!',
+      missCount: function (m) { return m + (m === 1 ? ' miss' : ' misses'); },
+      ptsToGo: function (n) { return n + ' pts to go'; },
+      pinHint: function (n) { return '(pin #' + n + ')'; },
+      rankN: function (r) { return 'Rank #' + r; },
       tagReach: function (tg) { return tg + ' reached'; },
       dotsTitle: function (m) { return 'Misses in a row: ' + m + '/3'; },
       dotsAria: function (m) { return m + ' of 3 missed'; },
@@ -1169,6 +1479,11 @@
       bannerPlayoff: function (lv, tg, bk) { return I18N.es.playoffN(lv) + ': el primero en llegar a ' + tg + ' puntos (si se pasa, vuelve a ' + bk + ').'; },
       bannerReach: function (names, n, tg) { return '¡<strong>' + names + '</strong>' + (n > 1 ? ' han' : ' ha') + ' llegado a ' + tg + '! Se termina la ronda: los jugadores restantes aún pueden empatar.'; },
       tagElim: 'eliminado', tagElimPlayoff: 'eliminado en el desempate',
+      tagDanger: '¡Peligro!', yourTurn: '¡Te toca!',
+      missCount: function (m) { return m + (m === 1 ? ' fallo' : ' fallos'); },
+      ptsToGo: function (n) { return 'Faltan ' + n + ' pts'; },
+      pinHint: function (n) { return '(bolo n.º ' + n + ')'; },
+      rankN: function (r) { return 'Puesto n.º ' + r; },
       tagReach: function (tg) { return tg + ' alcanzado'; },
       dotsTitle: function (m) { return 'Fallos seguidos: ' + m + '/3'; },
       dotsAria: function (m) { return m + ' fallo(s) de 3'; },
@@ -1550,6 +1865,7 @@
   $('start-btn').addEventListener('click', function () {
     if (state.names.length < 2) return;
     state.game = newGame(state.names, state.missMode, state.gameMode, 0);
+    $('history-card').open = false;
     state.undo = [];
     selected = [];
     save();
@@ -1574,6 +1890,7 @@
     $('banners').innerHTML = banners;
 
     // Tableau des scores (seulement les joueurs de la phase en cours)
+    var alive = inPlay(g);
     $('scoreboard').innerHTML = g.order.map(function (i) {
       var p = g.players[i];
       var isCur = i === g.current;
@@ -1582,15 +1899,43 @@
       for (var k = 0; k < 3; k++) dots += '<i class="' + (k < p.misses ? 'on' : '') + '"></i>';
       var tag = p.eliminated ? '<span class="tag elim">' + esc(t('tagElim')) + '</span>'
         : p.done ? '<span class="tag reach">' + esc(t('tagReach', g.target)) + '</span>' : '';
+      // 2 ratés d'affilée : « Danger ! » à la place du nombre de fautes
+      var danger = p.misses === 2 && !p.eliminated && !p.done;
+      var missLbl = danger ? '<span class="tag danger">' + esc(t('tagDanger')) + '</span>'
+        : '<span class="miss-lbl">' + esc(t('missCount', p.misses)) + '</span>';
+      var initial = (p.name.trim().match(/./u) || ['?'])[0].toUpperCase();
+      var foot;
+      if (isCur) {
+        // Bande du joueur en cours : points restants et rang parmi les joueurs encore en jeu
+        var left = g.target - p.score;
+        var rank = 1 + alive.filter(function (j) { return g.players[j].score > p.score; }).length;
+        foot = '<div class="strip">' +
+          '<span class="togo">' + esc(t('ptsToGo', left)) + (left >= 1 && left <= 12 ? ' ' + esc(t('pinHint', left)) : '') + '</span>' +
+          '<span class="rank">' + esc(t('rankN', rank)) + '</span>' +
+        '</div>';
+      } else {
+        foot = '<div class="bar" aria-hidden="true"><i style="width:' + Math.min(100, p.score / g.target * 100) + '%"></i></div>';
+      }
       return '<div class="' + cls + '" data-i="' + i + '">' +
         '<div class="pline">' +
-          (isCur ? '<span class="arrow">' + ICONS.arrow + '<span class="sr">' + esc(t('turnOf')) + ' </span></span>' : '') +
-          '<span class="nm">' + esc(p.name) + '</span>' +
-          '<span class="dots" title="' + esc(t('dotsTitle', p.misses)) + '" aria-label="' + esc(t('dotsAria', p.misses)) + '">' + dots + '</span>' +
-          tag +
-          '<span class="sc">' + p.score + '</span>' +
+          '<span class="av c' + (i % 3) + '">' +
+            (isCur ? '<span class="sr">' + esc(t('turnOf')) + ' </span>' : '') +
+            '<span aria-hidden="true">' + esc(initial) + '</span>' +
+          '</span>' +
+          '<div class="pmain">' +
+            '<div class="pc-top">' +
+              '<span class="nm">' + esc(p.name) + '</span>' +
+              (isCur ? '<span class="yourturn">' + esc(t('yourTurn')) + '</span>' : '') +
+              tag +
+            '</div>' +
+            '<div class="pc-sub">' +
+              '<span class="dots" title="' + esc(t('dotsTitle', p.misses)) + '" aria-label="' + esc(t('dotsAria', p.misses)) + '">' + dots + '</span>' +
+              missLbl +
+            '</div>' +
+          '</div>' +
+          '<span class="pscore"><span class="sc">' + p.score + '</span><span class="of">/' + g.target + '</span></span>' +
         '</div>' +
-        '<div class="bar" aria-hidden="true"><i style="width:' + Math.min(100, p.score / g.target * 100) + '%"></i></div>' +
+        foot +
       '</div>';
     }).join('');
 
@@ -1960,7 +2305,7 @@
     cv.width = W * dpr; cv.height = H * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     cv.classList.remove('hidden');
-    var colors = ['#AFD5AA', '#8C6057', '#5C5346', '#A69F98', '#F0F2EF'];
+    var colors = ['#E76F51', '#F4A261', '#2A9D8F', '#A33D23', '#FFF8F4'];
     var parts = [];
     for (var k = 0; k < 140; k++) {
       parts.push({
@@ -1988,13 +2333,13 @@
         ctx.translate(p.x, p.y);
         ctx.rotate(p.rot);
         ctx.fillStyle = p.color;
-        if (p.color === '#F0F2EF') { ctx.strokeStyle = '#A69F98'; ctx.lineWidth = 1; }
+        if (p.color === '#FFF8F4') { ctx.strokeStyle = '#DEC0B9'; ctx.lineWidth = 1; }
         if (p.round) {
           ctx.beginPath(); ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2); ctx.fill();
-          if (p.color === '#F0F2EF') ctx.stroke();
+          if (p.color === '#FFF8F4') ctx.stroke();
         } else {
           ctx.fillRect(-p.size / 2, -p.size / 3, p.size, p.size * .66);
-          if (p.color === '#F0F2EF') ctx.strokeRect(-p.size / 2, -p.size / 3, p.size, p.size * .66);
+          if (p.color === '#FFF8F4') ctx.strokeRect(-p.size / 2, -p.size / 3, p.size, p.size * .66);
         }
         ctx.restore();
       });
@@ -2222,6 +2567,7 @@
     var names = g.players.map(function (p) { return p.name; });
     var starter = (g.starter + 1) % names.length;
     state.game = newGame(names, g.missMode, g.gameMode, starter);
+    $('history-card').open = false;
     state.undo = [];
     selected = [];
     save();

@@ -1,6 +1,6 @@
 // Service worker : garde l'app en cache pour qu'elle marche sans réseau.
 // Changer CACHE à chaque mise à jour des fichiers listés pour forcer les téléphones à les recharger.
-const CACHE = 'molkky-2.4'; // suit la version de l'app (APP_VERSION dans index.html)
+const CACHE = 'molkky-2.6'; // suit la version de l'app (APP_VERSION dans index.html)
 const ASSETS = [
   './',
   'index.html',
@@ -44,7 +44,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Le reste (icônes, manifest, police Fredoka) : cache d'abord, puis réseau
+  // Le reste (icônes, manifest, police Plus Jakarta Sans) : cache d'abord, puis réseau
   const url = new URL(req.url);
   const cacheable = url.origin === self.location.origin ||
     url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com';
