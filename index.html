@@ -73,6 +73,7 @@
   .rules-card summary:focus-visible { outline: 3px solid var(--text); outline-offset: 4px; border-radius: 8px; }
   .rules-card .chevron { flex: none; transition: transform .2s; }
   .rules-card[open] .chevron { transform: rotate(180deg); }
+  .rules-card.closing .chevron { transform: none; } /* le chevron se retourne dès le début de la fermeture */
   .rules-card[open] ul.rules, .rules-card[open] ol.history { margin-top: 14px; }
   h2 { font-size: 18px; font-weight: 600; margin: 0 0 12px; }
 
@@ -1241,7 +1242,7 @@
 (function () {
   'use strict';
 
-  var APP_VERSION = '3.1'; // à augmenter à chaque mise à jour (1.1, 1.2...)
+  var APP_VERSION = '3.2'; // à augmenter à chaque mise à jour (1.1, 1.2...)
   var STORAGE_KEY = 'molkky-compteur-v1';
   var NOTES_KEY = 'molkky-notes';
   var MAIN = { target: 50, back: 25 };     // partie principale
@@ -2872,6 +2873,44 @@
   });
 
   // ---------- Démarrage ----------
+  // Blocs repliables (Rappel des règles, Historique) : ouverture et fermeture animées en hauteur
+  document.querySelectorAll('details.rules-card').forEach(function (d) {
+    var anim = null;
+    var closing = false;
+    d.querySelector('summary').addEventListener('click', function (e) {
+      if (!motionOK() || !d.animate) return; // animations réduites : comportement natif
+      e.preventDefault();
+      var from = d.offsetHeight;
+      if (anim) anim.cancel();
+      var opening = !d.open || closing;
+      var to;
+      if (opening) {
+        closing = false;
+        d.classList.remove('closing');
+        d.open = true;
+        to = d.offsetHeight;
+      } else {
+        closing = true;
+        d.classList.add('closing');
+        d.open = false;
+        to = d.offsetHeight; // hauteur fermée
+        d.open = true;
+      }
+      d.style.overflow = 'hidden';
+      anim = d.animate({ height: [from + 'px', to + 'px'] }, { duration: 300, easing: 'cubic-bezier(.4, 0, .2, 1)' });
+      var body = [].slice.call(d.children, 1);
+      body.forEach(function (el) {
+        el.animate({ opacity: opening ? [0, 1] : [1, 0] }, { duration: opening ? 300 : 200, easing: 'ease-out', fill: opening ? 'none' : 'forwards' })
+          .onfinish = function () { if (!opening) this.cancel(); };
+      });
+      anim.onfinish = function () {
+        anim = null;
+        if (closing) { d.open = false; closing = false; d.classList.remove('closing'); }
+        d.style.overflow = '';
+      };
+    });
+  });
+
   document.querySelectorAll('.app-version').forEach(function (el) { el.textContent = 'v' + APP_VERSION; });
   load();
   if (!state.lang) {
