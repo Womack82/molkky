@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#FFF8F4">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -18,6 +18,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400..800&display=swap" rel="stylesheet">
 <style>
+  /* Pas de zoom au pincement ni au double tap : l'appli reste à sa taille */
+  html, body { touch-action: pan-x pan-y; }
   :root {
     --bg: #F0F2EF;        /* fond de page, lignes joueurs */
     --card: #FFFFFF;      /* cartes */
@@ -1239,6 +1241,11 @@
 </div>
 
 <script>
+// iOS ignore user-scalable=no : on bloque aussi les gestes de pincement à la source
+['gesturestart', 'gesturechange', 'gestureend'].forEach(function (t) {
+  document.addEventListener(t, function (e) { e.preventDefault(); }, { passive: false });
+});
+document.addEventListener('touchmove', function (e) { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
 (function () {
   'use strict';
 
