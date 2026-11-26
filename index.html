@@ -575,6 +575,9 @@
   }
   .view-in { animation: view-in .22s ease-out; }
   @keyframes sheet-down { from { transform: translateY(-100%); } to { transform: none; } }
+  /* Changement d'écran (réglages ↔ partie) : fondu en montant légèrement */
+  .screen-in { animation: screen-in .3s cubic-bezier(.22, 1, .36, 1); }
+  @keyframes screen-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
   @keyframes view-in { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: none; } }
 
   /* Page Notes */
@@ -1249,7 +1252,7 @@ document.addEventListener('touchmove', function (e) { if (e.touches.length > 1) 
 (function () {
   'use strict';
 
-  var APP_VERSION = '3.2'; // à augmenter à chaque mise à jour (1.1, 1.2...)
+  var APP_VERSION = '3.3'; // à augmenter à chaque mise à jour (1.1, 1.2...)
   var STORAGE_KEY = 'molkky-compteur-v1';
   var NOTES_KEY = 'molkky-notes';
   var MAIN = { target: 50, back: 25 };     // partie principale
@@ -1730,8 +1733,14 @@ document.addEventListener('touchmove', function (e) { if (e.touches.length > 1) 
     return state.game.winner !== null ? 'win' : 'game';
   }
 
+  var lastScreen = null;
   function render() {
     var screen = currentScreen();
+    // Nouvel écran (sauf au lancement et pour la victoire, déjà animée) : il apparaît en fondu
+    if (lastScreen && screen !== lastScreen && screen !== 'win' && motionOK()) {
+      restartClass($('screen-' + screen), 'screen-in');
+    }
+    lastScreen = screen;
     $('screen-setup').classList.toggle('hidden', screen !== 'setup');
     $('screen-game').classList.toggle('hidden', screen !== 'game');
     $('screen-win').classList.toggle('hidden', screen !== 'win');
